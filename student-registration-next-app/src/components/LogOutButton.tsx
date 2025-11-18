@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 function LogOutButton() {
     const [loading, setLoading] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
     const router = useRouter();
 
     const handleLogOut = async () => {
@@ -30,7 +31,7 @@ function LogOutButton() {
                     description: "Redirecting to login page...",
                     duration: 2500,
                 });
-
+                setIsLoggedIn(false);
                 setTimeout(() => router.push("/login"), 1000);
             } else {
                 throw new Error(errorMessage);
@@ -44,6 +45,8 @@ function LogOutButton() {
             setLoading(false);
         }
     };
+
+    if (!isLoggedIn) return null;
 
     return (
         <Button
