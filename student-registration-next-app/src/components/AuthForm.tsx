@@ -1,22 +1,16 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { toast } from "sonner"
 import { CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useTransition } from "react"
-import { Loader2 } from "lucide-react"
-import { loginUserAction, signUpUserAction } from "@/actions/users"
+import { Bold, Loader2 } from "lucide-react"
+import { loginUserAction } from "@/actions/users"
 
-type Props = {
-    type: "login" | "signup"
-}
-
-export default function AuthForm({ type }: Props) {
-    const isLogin = type === "login"
+export default function AuthForm() {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
 
@@ -25,54 +19,32 @@ export default function AuthForm({ type }: Props) {
             const email = formData.get("email") as string
             const password = formData.get("password") as string
 
-            let errorMessage
-            let title
-            let description
-
             if (!email || !password) {
                 toast.error("Please fill in all required fields.")
                 return
             }
 
-            if (isLogin) {
-                errorMessage = (await loginUserAction(email, password)).errorMessage
-                title = "Login Successful"
-                description = "You have successfully logged in."
-            } else {
-                // Before calling signupAction, add this validation:
-                if (!isLogin) {
-                    const confirmPassword = formData.get("confirmPassword") as string
-
-                    if (password !== confirmPassword) {
-                        toast.error("Passwords do not match")
-                        return
-                    }
-
-                    if (password.length < 8) {
-                        toast.error("Password must be at least 8 characters")
-                        return
-                    }
-                }
-                errorMessage = (await signUpUserAction(email, password)).errorMessage
-                title = "Signup Successful"
-                description = "You have successfully signed up. Check your email for confirmation."
-            }
+            const result = await loginUserAction(email, password)
+            const errorMessage =
+                "errorMessage" in result ?
+                    result.errorMessage
+                    :
+                    "error" in result ?
+                        result.error
+                        :
+                        null
 
             if (!errorMessage) {
-                toast.success(title, {
-                    description,
+                toast.success("Login Successful", {
+                    description: "You have successfully logged in.",
                     duration: 2500,
                 })
-                isLogin ? router.replace("/student-dashboard") : router.replace("/login")
+                router.replace("/student-dashboard")
             } else {
-                toast.error(isLogin ? "Login Failed" : "Signup Failed", {
-                    description: errorMessage,
-                })
+                toast.error("Login Failed", { description: errorMessage })
             }
-
         })
     }
-
 
     return (
         <>
@@ -102,45 +74,15 @@ export default function AuthForm({ type }: Props) {
                         />
                     </div>
 
-                    {!isLogin && (
-                        <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">Confirm Password</Label>
-                            <Input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type="password"
-                                placeholder="••••••••"
-                                disabled={isPending}
-                                required
-                            />
-                        </div>
-                    )}
-
                     <Button type="submit" className="w-full">
-                        {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isLogin ? "Log In" : "Sign Up"}
+                        {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Log In"}
                     </Button>
                 </form>
             </CardContent>
 
-            <CardFooter className="flex justify-center text-sm text-muted-foreground space-x-1">
-                {isLogin ? (
-                    <>
-                        Don’t have an account?{" "}
-                        <Link href="/sign-up" className="px-1 text-primary">
-                            Sign up
-                        </Link>
-                    </>
-                ) : (
-                    <>
-                        Already have an account?{" "}
-                        <Link href="/login" className="px-1 text-primary">
-                            Log in
-                        </Link>
-                    </>
-                )}
+            <CardFooter className="flex justify-center text-sm text-muted-foreground">
+                <span>Don’t have access? Contact the <span className="font-[1000]">gwapong</span> admin, si <span className="font-bold">Prince Roben Gloria</span>, to create your account.</span>
             </CardFooter>
-
         </>
     )
 }
-

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { DarkModeToggle } from "./DarkModeToggle"
 import LogOutButton from "./LogOutButton"
 import { getUser } from "@/auth/server"
+import { House } from "lucide-react"
 
 async function Header() {
     const user = await getUser(); // Replace with actual user authentication logic
@@ -32,9 +33,9 @@ async function Header() {
                                 Log In
                             </Link>
                         </Button>
-                        <Button asChild variant={"outline"}>
-                            <Link href="/sign-up" className="hidden sm:block text-sm text-primary hover:underline">
-                                Sign Up
+                        <Button asChild>
+                            <Link href="/" className="text-sm text-primary hover:underline">
+                                <House />
                             </Link>
                         </Button>
                     </>

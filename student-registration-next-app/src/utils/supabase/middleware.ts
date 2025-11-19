@@ -26,44 +26,44 @@ export async function updateSession(request: NextRequest) {
 
     console.log("Middleware: updateSession called for ", request.nextUrl.pathname)
 
-    // const supabase = createServerClient(
-    //     process.env.SUPABASE_URL!,
-    //     process.env.SUPABASE_ANON_KEY!,
-    //     {
-    //         cookies: {
-    //             getAll() {
-    //                 return request.cookies.getAll()
-    //             },
-    //             setAll(cookiesToSet) {
-    //                 cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-    //                 supabaseResponse = NextResponse.next({
-    //                     request,
-    //                 })
-    //                 cookiesToSet.forEach(({ name, value }) => supabaseResponse.cookies.set(name, value))
-    //             },
-    //         },
-    //     }
-    // )
+    const supabase = createServerClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return request.cookies.getAll()
+                },
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+                    supabaseResponse = NextResponse.next({
+                        request,
+                    })
+                    cookiesToSet.forEach(({ name, value }) => supabaseResponse.cookies.set(name, value))
+                },
+            },
+        }
+    )
 
     // IMPORTANT: Avoid writing any logic between createServerClient and
     // supabase.auth.getClaims(). A simple mistake could make it very hard to debug
     // issues with users being randomly logged out.
 
     // IMPORTANT: Don't remove getClaims()
-    // const { data } = await supabase.auth.getClaims()
+    const { data } = await supabase.auth.getClaims()
 
-    // const user = data?.claims
+    const user = data?.claims
 
-    // if (
-    //     !user &&
-    //     !request.nextUrl.pathname.startsWith('/login') &&
-    //     !request.nextUrl.pathname.startsWith('/auth')
-    // ) {
-    //     // no user, potentially respond by redirecting the user to the login page
-    //     const url = request.nextUrl.clone()
-    //     url.pathname = '/login'
-    //     return NextResponse.redirect(url)
-    // }
+    if (
+        !user &&
+        !request.nextUrl.pathname.startsWith('/login') &&
+        !request.nextUrl.pathname.startsWith('/auth')
+    ) {
+        // no user, potentially respond by redirecting the user to the login page
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        return NextResponse.redirect(url)
+    }
 
     // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
     // creating a new response object with NextResponse.next() make sure to:

@@ -16,11 +16,11 @@ function LogOutButton() {
         if (loading) return;
         setLoading(true);
 
-        // Show pending toast (for async feedback)
         const toastId = toast.loading("Logging out...");
 
+        console.log("Logging out user...");
+
         try {
-            // Simulate logout delay
             const result = await logoutUserAction();
             const errorMessage = "errorMessage" in result ? result.errorMessage : result.error;
 

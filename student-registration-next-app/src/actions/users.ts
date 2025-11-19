@@ -5,6 +5,7 @@ import { handleError } from "@/lib/utils";
 
 export const loginUserAction = async (email: string, password: string) => {
     try {
+        const supabaseClient = await createClient()
         const { auth } = await createClient()
         const { error } = await auth.signInWithPassword({ email, password });
 
