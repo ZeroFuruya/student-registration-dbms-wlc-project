@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useTransition } from "react"
 import { Loader2 } from "lucide-react"
+import { loginUserAction, signUpUserAction } from "@/actions/users"
 
 type Props = {
     type: "login" | "signup"
@@ -17,14 +18,61 @@ type Props = {
 export default function AuthForm({ type }: Props) {
     const isLogin = type === "login"
     const router = useRouter()
+    const [isPending, startTransition] = useTransition()
 
     const handleSubmit = async (formData: FormData) => {
-        console.log("Form submitted:", formData)
-        toast.success(`${isLogin ? "Logged in" : "Signed up"} successfully! Redirecting...`)
-        router.push("/")
+        startTransition(async () => {
+            const email = formData.get("email") as string
+            const password = formData.get("password") as string
+
+            let errorMessage
+            let title
+            let description
+
+            if (!email || !password) {
+                toast.error("Please fill in all required fields.")
+                return
+            }
+
+            if (isLogin) {
+                errorMessage = (await loginUserAction(email, password)).errorMessage
+                title = "Login Successful"
+                description = "You have successfully logged in."
+            } else {
+                // Before calling signupAction, add this validation:
+                if (!isLogin) {
+                    const confirmPassword = formData.get("confirmPassword") as string
+
+                    if (password !== confirmPassword) {
+                        toast.error("Passwords do not match")
+                        return
+                    }
+
+                    if (password.length < 8) {
+                        toast.error("Password must be at least 8 characters")
+                        return
+                    }
+                }
+                errorMessage = (await signUpUserAction(email, password)).errorMessage
+                title = "Signup Successful"
+                description = "You have successfully signed up. Check your email for confirmation."
+            }
+
+            if (!errorMessage) {
+                toast.success(title, {
+                    description,
+                    duration: 2500,
+                })
+                isLogin ? router.replace("/student-dashboard") : router.replace("/login")
+            } else {
+                toast.error(isLogin ? "Login Failed" : "Signup Failed", {
+                    description: errorMessage,
+                })
+            }
+
+        })
     }
 
-    const [isPending, startTransition] = useTransition()
 
     return (
         <>
@@ -95,3 +143,4 @@ export default function AuthForm({ type }: Props) {
         </>
     )
 }
+

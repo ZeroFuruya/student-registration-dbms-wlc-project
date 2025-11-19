@@ -1,5 +1,6 @@
 "use client";
 
+import { logoutUserAction } from "@/actions/users";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,21 +21,19 @@ function LogOutButton() {
 
         try {
             // Simulate logout delay
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            // Example: replace this with actual logout logic
-            const errorMessage = null;
+            const result = await logoutUserAction();
+            const errorMessage = "errorMessage" in result ? result.errorMessage : result.error;
 
             if (!errorMessage) {
                 toast.success("Logged out successfully!", {
                     id: toastId,
-                    description: "Redirecting to login page...",
+                    description: "Redirecting to home page...",
                     duration: 2500,
                 });
                 setIsLoggedIn(false);
-                setTimeout(() => router.push("/login"), 1000);
+                setTimeout(() => router.replace("/"), 1000);
             } else {
-                throw new Error(errorMessage);
+                throw new Error(String(errorMessage));
             }
         } catch (err: any) {
             toast.error("Logout failed!", {

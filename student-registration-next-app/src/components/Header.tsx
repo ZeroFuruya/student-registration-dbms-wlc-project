@@ -4,9 +4,10 @@ import { shadow } from "@/styles/utils"
 import { Button } from "@/components/ui/button"
 import { DarkModeToggle } from "./DarkModeToggle"
 import LogOutButton from "./LogOutButton"
+import { getUser } from "@/auth/server"
 
-function Header() {
-    const user = 1; // Replace with actual user authentication logic
+async function Header() {
+    const user = await getUser(); // Replace with actual user authentication logic
 
     return (
         <header
