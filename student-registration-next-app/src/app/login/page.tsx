@@ -27,7 +27,7 @@ export default function LoginPage() {
           <CardDescription>Sign in to continue</CardDescription>
         </CardHeader>
 
-        <AuthForm type="login" />
+        <AuthForm />
       </Card>
     </div>
   )

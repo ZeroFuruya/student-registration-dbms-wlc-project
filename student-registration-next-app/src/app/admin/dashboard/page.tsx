@@ -1,9 +1,6 @@
-import React from 'react'
+import React from "react";
+import AdminDashboard from "./AdminDashboard";
 
-function AdminDash() {
-    return (
-        <div>AdminDash</div>
-    )
+export default function AdminDashPage() {
+    return <AdminDashboard />;
 }
-
-export default AdminDash
