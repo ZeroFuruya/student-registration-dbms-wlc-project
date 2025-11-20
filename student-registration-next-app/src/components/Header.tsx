@@ -1,28 +1,40 @@
-import Link from "next/link"
-import Image from "next/image"
-import { shadow } from "@/styles/utils"
-import { Button } from "@/components/ui/button"
-import { DarkModeToggle } from "./DarkModeToggle"
-import LogOutButton from "./LogOutButton"
-import { getUser } from "@/auth/server"
-import { House } from "lucide-react"
+import Link from "next/link";
+import Image from "next/image";
+import { shadow } from "@/styles/utils";
+import { Button } from "@/components/ui/button";
+import { DarkModeToggle } from "./DarkModeToggle";
+import LogOutButton from "./LogOutButton";
+import { getUser } from "@/auth/server";
+import { House } from "lucide-react";
+import { redirect } from "next/navigation";
 
 async function Header() {
-    const user = await getUser(); // Replace with actual user authentication logic
+    const user = await getUser();
+
+    const adminEmails = process.env.ADMIN_EMAILS
+        ? process.env.ADMIN_EMAILS.split(",")
+        : [];
+
+    let homeHref = "/";
+
+    if (!user) {
+        homeHref = "/";
+    } else if (adminEmails.includes(user.email)) {
+        homeHref = "/admin/dashboard";
+    }
 
     return (
         <header
             className="relative flex h-28 w-full items-center justify-between bg-popover px-3 shadow-md dark:bg-popover-dark md:px-8 sm:px-6"
-            style={{
-                boxShadow: shadow
-            }}
+            style={{ boxShadow: shadow }}
         >
-            <Link href="/" className="flex items-end gap-2">
+            <Link href={homeHref} className="flex items-end gap-2">
                 <Image src="/wlc.png" alt="Logo" width={100} height={100} priority />
                 <h1 className="flex flex-col pb-1 text-2xl font-semibold leading-6">
                     WLC Ormoc <span>Student Registration</span>
                 </h1>
             </Link>
+
             <div className="flex gap-4">
                 {user ? (
                     <LogOutButton />
@@ -43,7 +55,7 @@ async function Header() {
                 <DarkModeToggle />
             </div>
         </header>
-    )
+    );
 }
 
-export default Header
+export default Header;

@@ -46,8 +46,6 @@ export const signUpUserAction = async (email: string, password: string) => {
         const user = data.user?.id;
         if (!user) throw new Error("Error in signing up");
 
-        // add user to 'users' table
-
         return { error: null };
     }
     catch (error) {

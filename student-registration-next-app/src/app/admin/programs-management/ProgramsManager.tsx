@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 import {
@@ -23,22 +23,25 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 
-import { addProgram, updateProgram, deleteProgram } from "@/actions/programs";
+import { addProgram, updateProgram, deleteProgram } from "@/actions/programs.server";
 
 export default function ProgramsManager({ programs }) {
-    const [list] = useState(programs);
+    const [programsState, setProgramsState] = useState(programs);
     const [search, setSearch] = useState("");
+    const [mounted, setMounted] = useState(false);
 
     const [newProgram, setNewProgram] = useState({
         program_code: "",
         program_name: "",
         total_units: "",
         years_to_complete: "",
-        status: "",
+        status: "Active",
         created_at: "",
     });
 
-    const filtered = list.filter((p) => {
+    useEffect(() => setMounted(true), []);
+
+    const filtered = programsState.filter((p) => {
         const q = search.toLowerCase();
         return (
             p.program_name.toLowerCase().includes(q) ||
@@ -58,16 +61,26 @@ export default function ProgramsManager({ programs }) {
         }
 
         try {
-            await addProgram({
+            const created = await addProgram({
                 ...newProgram,
                 total_units: Number(newProgram.total_units),
                 years_to_complete: Number(newProgram.years_to_complete),
                 created_at: new Date().toISOString(),
             });
 
-            toast.success("Program added");
-            location.reload();
+            setProgramsState([...programsState, created]);
+            setNewProgram({
+                program_code: "",
+                program_name: "",
+                total_units: "",
+                years_to_complete: "",
+                status: "Active",
+                created_at: "",
+            });
+
+            toast.success("Program added successfully!");
         } catch (err) {
+            console.error(err);
             toast.error(err.message || "Error creating program");
         }
     };
@@ -76,11 +89,13 @@ export default function ProgramsManager({ programs }) {
     const handleUpdate = async (id, updated) => {
         try {
             await updateProgram(id, updated);
-            toast.success("Updated");
-            await new Promise((r) => setTimeout(r, 1000));
-            location.reload();
+            setProgramsState((prev) =>
+                prev.map((p) => (p.id === id ? { ...p, ...updated } : p))
+            );
+            toast.success("Program updated");
         } catch (err) {
-            toast.error(err.message || "Error updating");
+            console.error(err);
+            toast.error(err.message || "Error updating program");
         }
     };
 
@@ -90,11 +105,11 @@ export default function ProgramsManager({ programs }) {
 
         try {
             await deleteProgram(id);
-            toast.success("Deleted");
-            await new Promise((r) => setTimeout(r, 1000));
-            location.reload();
+            setProgramsState((prev) => prev.filter((p) => p.id !== id));
+            toast.success("Program deleted");
         } catch (err) {
-            toast.error(err.message || "Error deleting");
+            console.error(err);
+            toast.error(err.message || "Error deleting program");
         }
     };
 
@@ -111,7 +126,7 @@ export default function ProgramsManager({ programs }) {
             />
 
             {/* CREATE FORM */}
-            <div className="flex gap-2 items-center flex-wrap">
+            <div className="flex gap-2 flex-wrap items-center">
                 <Input
                     placeholder="Program Code"
                     className="w-40"
@@ -120,7 +135,6 @@ export default function ProgramsManager({ programs }) {
                         setNewProgram({ ...newProgram, program_code: e.target.value })
                     }
                 />
-
                 <Input
                     placeholder="Program Name"
                     className="w-60"
@@ -129,7 +143,6 @@ export default function ProgramsManager({ programs }) {
                         setNewProgram({ ...newProgram, program_name: e.target.value })
                     }
                 />
-
                 <Input
                     placeholder="Total Units"
                     type="number"
@@ -139,7 +152,6 @@ export default function ProgramsManager({ programs }) {
                         setNewProgram({ ...newProgram, total_units: e.target.value })
                     }
                 />
-
                 <Input
                     placeholder="Years"
                     type="number"
@@ -152,28 +164,25 @@ export default function ProgramsManager({ programs }) {
                         })
                     }
                 />
-
-                {/* SHADCN SELECT */}
                 <Select
-                    onValueChange={(v) =>
-                        setNewProgram({ ...newProgram, status: v })
-                    }
+                    value={newProgram.status}
+                    onValueChange={(v) => setNewProgram({ ...newProgram, status: v })}
                 >
                     <SelectTrigger className="w-32">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
-
                     <SelectContent>
                         <SelectItem value="Active">Active</SelectItem>
                         <SelectItem value="Inactive">Inactive</SelectItem>
                         <SelectItem value="Removed">Removed</SelectItem>
                     </SelectContent>
                 </Select>
-
-                <Button onClick={handleCreate}>Add</Button>
+                <Button onClick={handleCreate} className="bg-primary text-white hover:bg-primary/90">
+                    Add
+                </Button>
             </div>
 
-            {/* TABLE */}
+            {/* PROGRAMS TABLE */}
             <Table className="mt-4">
                 <TableHeader>
                     <TableRow>
@@ -182,31 +191,40 @@ export default function ProgramsManager({ programs }) {
                         <TableHead>Units</TableHead>
                         <TableHead>Years</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead></TableHead>
+                        <TableHead>Actions</TableHead>
                     </TableRow>
                 </TableHeader>
-
                 <TableBody>
                     {filtered.map((p) => (
                         <TableRow key={p.id}>
                             <TableCell>
                                 <Input
-                                    defaultValue={p.program_code}
-                                    onBlur={(e) =>
-                                        handleUpdate(p.id, {
-                                            program_code: e.target.value,
-                                        })
+                                    value={p.program_code}
+                                    onChange={(e) =>
+                                        setProgramsState((prev) =>
+                                            prev.map((pr) =>
+                                                pr.id === p.id ? { ...pr, program_code: e.target.value } : pr
+                                            )
+                                        )
+                                    }
+                                    onBlur={() =>
+                                        handleUpdate(p.id, { program_code: p.program_code })
                                     }
                                 />
                             </TableCell>
 
                             <TableCell>
                                 <Input
-                                    defaultValue={p.program_name}
-                                    onBlur={(e) =>
-                                        handleUpdate(p.id, {
-                                            program_name: e.target.value,
-                                        })
+                                    value={p.program_name}
+                                    onChange={(e) =>
+                                        setProgramsState((prev) =>
+                                            prev.map((pr) =>
+                                                pr.id === p.id ? { ...pr, program_name: e.target.value } : pr
+                                            )
+                                        )
+                                    }
+                                    onBlur={() =>
+                                        handleUpdate(p.id, { program_name: p.program_name })
                                     }
                                 />
                             </TableCell>
@@ -214,11 +232,18 @@ export default function ProgramsManager({ programs }) {
                             <TableCell>
                                 <Input
                                     type="number"
-                                    defaultValue={p.total_units}
-                                    onBlur={(e) =>
-                                        handleUpdate(p.id, {
-                                            total_units: Number(e.target.value),
-                                        })
+                                    value={p.total_units}
+                                    onChange={(e) =>
+                                        setProgramsState((prev) =>
+                                            prev.map((pr) =>
+                                                pr.id === p.id
+                                                    ? { ...pr, total_units: Number(e.target.value) }
+                                                    : pr
+                                            )
+                                        )
+                                    }
+                                    onBlur={() =>
+                                        handleUpdate(p.id, { total_units: Number(p.total_units) })
                                     }
                                 />
                             </TableCell>
@@ -226,12 +251,19 @@ export default function ProgramsManager({ programs }) {
                             <TableCell>
                                 <Input
                                     type="number"
-                                    defaultValue={p.years_to_complete}
-                                    onBlur={(e) =>
+                                    value={p.years_to_complete}
+                                    onChange={(e) =>
+                                        setProgramsState((prev) =>
+                                            prev.map((pr) =>
+                                                pr.id === p.id
+                                                    ? { ...pr, years_to_complete: Number(e.target.value) }
+                                                    : pr
+                                            )
+                                        )
+                                    }
+                                    onBlur={() =>
                                         handleUpdate(p.id, {
-                                            years_to_complete: Number(
-                                                e.target.value
-                                            ),
+                                            years_to_complete: Number(p.years_to_complete),
                                         })
                                     }
                                 />
@@ -239,20 +271,15 @@ export default function ProgramsManager({ programs }) {
 
                             <TableCell>
                                 <Select
-                                    defaultValue={p.status || "Active"}
-                                    onValueChange={(v) =>
-                                        handleUpdate(p.id, { status: v })
-                                    }
+                                    value={p.status || "Active"}
+                                    onValueChange={(v) => handleUpdate(p.id, { status: v })}
                                 >
                                     <SelectTrigger className="w-full">
                                         <SelectValue />
                                     </SelectTrigger>
-
                                     <SelectContent>
                                         <SelectItem value="Active">Active</SelectItem>
-                                        <SelectItem value="Inactive">
-                                            Inactive
-                                        </SelectItem>
+                                        <SelectItem value="Inactive">Inactive</SelectItem>
                                         <SelectItem value="Removed">Removed</SelectItem>
                                     </SelectContent>
                                 </Select>
