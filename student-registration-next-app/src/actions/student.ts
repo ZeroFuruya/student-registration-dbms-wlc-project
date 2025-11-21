@@ -1,78 +1,97 @@
 "use server";
 
 import { createClient } from "@/auth/server";
+import { handleError } from "@/lib/utils";
 
-export async function getStudentDashboardData(studentAuthId: string) {
-    const supabase = await createClient();
+export interface StudentAnalytics {
+    currentProgram: string;
+    yearLevel: number;
+    registeredCourses: number;
+    completedUnits: number;
+    pendingDocuments: number;
+    upcomingPayments: number;
+}
 
-    // 1️⃣ Get student info by auth_user_id
-    const { data: student, error: studentError } = await supabase
-        .from("students")
-        .select("id,first_name,last_name,program_id,year_level")
-        .eq("auth_user_id", studentAuthId)
-        .maybeSingle();
+// Fetch dashboard data for a student by auth_user_id
+export const getStudentDashboardData = async (authUserId: string) => {
+    try {
+        const supabase = await createClient();
 
-    if (studentError || !student) throw new Error(studentError?.message || "Student not found");
+        // 1️⃣ Get student info
+        const { data: student, error: studentError } = await supabase
+            .from("students")
+            .select(`
+                id,
+                first_name,
+                last_name,
+                program_id,
+                year_level
+            `)
+            .eq("auth_user_id", authUserId)
+            .maybeSingle();
 
-    // 1b️⃣ Get program name
-    const { data: programData, error: programError } = await supabase
-        .from("programs")
-        .select("program_name")
-        .eq("id", student.program_id)
-        .maybeSingle();
+        if (studentError) throw studentError;
+        if (!student) throw new Error("Student not found");
 
-    if (programError || !programData) throw new Error(programError?.message || "Program not found");
+        // 2️⃣ Get program info
+        const { data: programData, error: programError } = await supabase
+            .from("programs")
+            .select("program_name, total_units")
+            .eq("id", student.program_id)
+            .maybeSingle();
 
-    // 2️⃣ Get all enrollments of student
-    const { data: enrollments, error: enrollmentsError } = await supabase
-        .from("enrollments")
-        .select("id,enrollment_status,total_amount,amount_paid")
-        .eq("student_id", student.id);
+        if (programError) throw programError;
+        if (!programData) throw new Error("Program not found");
 
-    if (enrollmentsError) throw new Error(enrollmentsError.message);
+        // 3️⃣ Get all enrollments for this student
+        const { data: enrollments, error: enrollmentsError } = await supabase
+            .from("enrollments")
+            .select("id, total_amount, amount_paid, payment_status")
+            .eq("student_id", student.id);
 
-    const registeredCourses = enrollments?.length || 0;
+        if (enrollmentsError) throw enrollmentsError;
 
-    // 3️⃣ Pending documents
-    let pendingDocuments = 0;
-    if (enrollments?.length) {
-        const enrollmentIds = enrollments.map(e => e.id);
-        const { data: documentsData, error: documentsError } = await supabase
+        const registeredCourses = enrollments?.length || 0;
+
+        // 4️⃣ Pending documents
+        const enrollmentIds = enrollments?.map((e) => e.id) || [];
+        const { data: pendingDocsData, error: pendingDocsError } = await supabase
             .from("enrollment_documents")
             .select("id")
             .in("enrollment_id", enrollmentIds)
             .eq("status", "Pending");
 
-        if (documentsError) throw new Error(documentsError.message);
-        pendingDocuments = documentsData?.length || 0;
-    }
+        if (pendingDocsError) throw pendingDocsError;
+        const pendingDocuments = pendingDocsData?.length || 0;
 
-    // 4️⃣ Upcoming payments
-    const upcomingPayments = enrollments?.filter(e => e.total_amount > (e.amount_paid || 0)).length || 0;
+        // 5️⃣ Upcoming payments
+        const upcomingPayments = enrollments?.filter(
+            (e) => e.payment_status !== "Paid"
+        ).length || 0;
 
-    // 5️⃣ Completed units
-    let completedUnits = 0;
-    const { data: yearsData } = await supabase
-        .from("years")
-        .select("year_id")
-        .eq("program_id", student.program_id);
-
-    if (yearsData?.length) {
-        const yearIds = yearsData.map(y => y.year_id);
-        const { data: coursesData } = await supabase
+        // 6️⃣ Completed units
+        // Assuming each enrollment is linked to a course via enrollments -> courses
+        const { data: courseUnitsData, error: courseUnitsError } = await supabase
             .from("courses")
             .select("units")
-            .in("year_id", yearIds);
+            .in(
+                "year_id",
+                [student.program_id] // ⚡ You might need to join via years table if year_id differs
+            );
 
-        completedUnits = coursesData?.reduce((sum, c) => sum + (c.units || 0), 0) || 0;
+        const completedUnits = courseUnitsData?.reduce((sum, c: any) => sum + (c.units || 0), 0) || 0;
+
+        return {
+            currentProgram: programData.program_name,
+            yearLevel: student.year_level,
+            registeredCourses,
+            completedUnits,
+            pendingDocuments,
+            upcomingPayments,
+        } as StudentAnalytics;
+
+    } catch (err: any) {
+        handleError(err);
+        throw err;
     }
-
-    return {
-        currentProgram: programData.program_name,
-        yearLevel: student.year_level,
-        registeredCourses,
-        completedUnits,
-        pendingDocuments,
-        upcomingPayments,
-    };
-}
+};

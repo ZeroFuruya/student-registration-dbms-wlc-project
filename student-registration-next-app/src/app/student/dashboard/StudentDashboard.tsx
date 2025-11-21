@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import Link from "next/link";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { LayoutDashboard, FileText, CalendarClock, BookOpen, GraduationCap, Menu, X } from "lucide-react";
 
 interface StudentAnalytics {
@@ -15,21 +15,29 @@ interface StudentAnalytics {
     upcomingPayments: number;
 }
 
-interface StudentDashboardProps {
-    initialData: StudentAnalytics;
+interface Props {
+    initialData?: StudentAnalytics; // ⚡ Make optional to handle undefined
 }
 
 const navItems = [
     { href: "/student/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/student/registrations", label: "My Registration", icon: FileText },
-    { href: "/student/enrollments", label: "My Enrollments", icon: CalendarClock },
+    { href: "/student/enrollment", label: "My Enrollments", icon: CalendarClock },
     { href: "/student/payments", label: "Payments", icon: BookOpen },
     { href: "/student/courses", label: "Courses", icon: GraduationCap },
 ];
 
-export default function StudentDashboard({ initialData }: StudentDashboardProps) {
-    const [analytics, setAnalytics] = useState<StudentAnalytics>(initialData);
+export default function StudentDashboard({ initialData }: Props) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    // ⚡ Provide fallback values if initialData is undefined
+    const analytics: StudentAnalytics = initialData || {
+        currentProgram: "N/A",
+        yearLevel: 0,
+        registeredCourses: 0,
+        completedUnits: 0,
+        pendingDocuments: 0,
+        upcomingPayments: 0,
+    };
 
     return (
         <div className="flex min-h-fit">
@@ -79,39 +87,37 @@ export default function StudentDashboard({ initialData }: StudentDashboardProps)
             <main className="flex-1 p-6">
                 <h1 className="text-3xl font-bold mb-6">Student Dashboard</h1>
 
-                {analytics && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                        <Card>
-                            <CardHeader>Program</CardHeader>
-                            <CardContent className="text-xl font-bold">{analytics.currentProgram}</CardContent>
-                        </Card>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <Card>
+                        <CardHeader>Program</CardHeader>
+                        <CardContent className="text-xl font-bold">{analytics.currentProgram}</CardContent>
+                    </Card>
 
-                        <Card>
-                            <CardHeader>Year Level</CardHeader>
-                            <CardContent className="text-xl font-bold">{analytics.yearLevel}</CardContent>
-                        </Card>
+                    <Card>
+                        <CardHeader>Year Level</CardHeader>
+                        <CardContent className="text-xl font-bold">{analytics.yearLevel}</CardContent>
+                    </Card>
 
-                        <Card>
-                            <CardHeader>Registered Courses</CardHeader>
-                            <CardContent className="text-xl font-bold">{analytics.registeredCourses}</CardContent>
-                        </Card>
+                    <Card>
+                        <CardHeader>Registered Courses</CardHeader>
+                        <CardContent className="text-xl font-bold">{analytics.registeredCourses}</CardContent>
+                    </Card>
 
-                        <Card>
-                            <CardHeader>Completed Units</CardHeader>
-                            <CardContent className="text-xl font-bold">{analytics.completedUnits}</CardContent>
-                        </Card>
+                    <Card>
+                        <CardHeader>Completed Units</CardHeader>
+                        <CardContent className="text-xl font-bold">{analytics.completedUnits}</CardContent>
+                    </Card>
 
-                        <Card>
-                            <CardHeader>Pending Documents</CardHeader>
-                            <CardContent className="text-xl font-bold">{analytics.pendingDocuments}</CardContent>
-                        </Card>
+                    <Card>
+                        <CardHeader>Pending Documents</CardHeader>
+                        <CardContent className="text-xl font-bold">{analytics.pendingDocuments}</CardContent>
+                    </Card>
 
-                        <Card>
-                            <CardHeader>Upcoming Payments</CardHeader>
-                            <CardContent className="text-xl font-bold">{analytics.upcomingPayments}</CardContent>
-                        </Card>
-                    </div>
-                )}
+                    <Card>
+                        <CardHeader>Upcoming Payments</CardHeader>
+                        <CardContent className="text-xl font-bold">{analytics.upcomingPayments}</CardContent>
+                    </Card>
+                </div>
             </main>
         </div>
     );

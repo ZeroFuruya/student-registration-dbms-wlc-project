@@ -1,20 +1,22 @@
 import StudentDashboard from "./StudentDashboard";
 import { getStudentDashboardData } from "@/actions/student";
-import { cookies } from "next/headers";
+import { createClient } from "@/auth/server";
 
 export default async function Page() {
-    // ⚡ Await cookies() in server components
-    const cookieStore = await cookies();
+    try {
+        const supabase = await createClient();
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error || !user) throw new Error("User not logged in");
 
-    // Get the Supabase auth token cookie
-    const authCookie = cookieStore.get("sb-auth-token");
+        const initialData = await getStudentDashboardData(user.id);
 
-    if (!authCookie) throw new Error("User not logged in");
+        return <StudentDashboard initialData={initialData} />;
 
-    const authUserId = authCookie.value;
-
-    // Fetch student dashboard data
-    const studentData = await getStudentDashboardData(authUserId);
-
-    return <StudentDashboard initialData={studentData} />;
+    } catch (err: any) {
+        return (
+            <div className="p-6 text-red-600 font-bold">
+                Error: {err.message}
+            </div>
+        );
+    }
 }
