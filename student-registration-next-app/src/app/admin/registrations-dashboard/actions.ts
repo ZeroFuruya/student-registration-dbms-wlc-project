@@ -1,26 +1,48 @@
 'use server';
 import { createClient } from '@/auth/server';
 
-export async function approveRegistration(registrationId: number, adminId: number) {
-    const supabase = await createClient();
+export async function approveRegistration(regId: number, adminId: number) {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/registrations/approve`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ regId, adminId }),
+        });
 
-    const { error } = await supabase
-        .from('registrations')
-        .update({ status: 'Approved', reviewed_by: adminId, reviewed_at: new Date().toISOString() })
-        .eq('id', registrationId);
+        // Parse the response body (even if not OK)
+        let data;
+        try {
+            data = await res.json();
+        } catch (jsonErr) {
+            data = null;
+        }
 
-    if (error) throw error;
-    return true;
+        if (!res.ok) {
+            console.error(
+                `[ApproveRegistration] Failed — status: ${res.status}, statusText: ${res.statusText}, body:`,
+                data
+            );
+            throw new Error(
+                `Failed to approve registration (status ${res.status}). See console for details.`
+            );
+        }
+
+        return data;
+    } catch (err: any) {
+        console.error("[ApproveRegistration] Unexpected error:", err);
+        throw err;
+    }
 }
 
-export async function rejectRegistration(registrationId: number, adminId: number) {
-    const supabase = await createClient();
 
-    const { error } = await supabase
-        .from('registrations')
-        .update({ status: 'Rejected', reviewed_by: adminId, reviewed_at: new Date().toISOString() })
-        .eq('id', registrationId);
+export async function rejectRegistration(regId: number, adminId: number) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/registrations/reject`, {
+        method: "POST",
+        body: JSON.stringify({ regId, adminId }),
+    });
 
-    if (error) throw error;
-    return true;
+    if (!res.ok) throw new Error("Failed to reject");
+    return await res.json();
 }

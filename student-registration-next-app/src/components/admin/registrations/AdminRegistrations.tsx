@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { RegistrationToolbar } from "./RegistrationToolbar";
-import { RegistrationsTable } from "./RegistrationTable";
+import { RegistrationsTable } from "./RegistrationsTable";
 import { RegistrationCard } from "./RegistrationCard";
 import { Database } from "@/types/supabase";
 

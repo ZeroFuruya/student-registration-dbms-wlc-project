@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,16 +14,8 @@ import {
 } from "@/components/ui/select";
 import { addRegistration } from "@/actions/registrations";
 
-type Program = {
-    id: number;
-    program_name: string;
-};
-
-type Year = {
-    year_id: number;
-    program_id: number;
-    year_level: number;
-};
+type Program = { id: number; program_name: string };
+type Year = { year_id: number; program_id: number; year_level: number };
 
 export default function RegistrationForm({ programs = [], years = [] }: { programs?: Program[]; years?: Year[] }) {
     const [form, setForm] = useState({
@@ -37,17 +29,15 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
         year_level: null as number | null,
         is_returning_student: false,
     });
-
     const [submitting, setSubmitting] = useState(false);
     const [touched, setTouched] = useState<Record<string, boolean>>({});
+    const firstInvalidRef = useRef<HTMLInputElement | null>(null);
 
-    // compute years for chosen program
     const programYears = useMemo(
         () => (form.program_id ? years.filter((y) => y.program_id === form.program_id) : []),
         [form.program_id, years]
     );
 
-    // simple validators
     const validators = {
         first_name: (v: string) => v.trim().length > 0,
         last_name: (v: string) => v.trim().length > 0,
@@ -56,21 +46,14 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
         year_level: (v: number | null) => typeof v === "number" && !Number.isNaN(v),
     };
 
-    // live errors
     const errors = {
-        first_name: !validators.first_name(form.first_name) && touched.first_name ? "First name is required." : "",
-        last_name: !validators.last_name(form.last_name) && touched.last_name ? "Last name is required." : "",
-        email:
-            touched.email && !validators.email(form.email)
-                ? "Enter a valid email (example@domain.com)."
-                : "",
-        program_id:
-            touched.program_id && !validators.program_id(form.program_id) ? "Select a program." : "",
-        year_level:
-            touched.year_level && !validators.year_level(form.year_level) ? "Select a year level." : "",
+        first_name: touched.first_name && !validators.first_name(form.first_name) ? "First name is required." : "",
+        last_name: touched.last_name && !validators.last_name(form.last_name) ? "Last name is required." : "",
+        email: touched.email && !validators.email(form.email) ? "Enter a valid email." : "",
+        program_id: touched.program_id && !validators.program_id(form.program_id) ? "Select a program." : "",
+        year_level: touched.year_level && !validators.year_level(form.year_level) ? "Select a year level." : "",
     };
 
-    // form validity
     const isValid =
         validators.first_name(form.first_name) &&
         validators.last_name(form.last_name) &&
@@ -78,29 +61,34 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
         validators.program_id(form.program_id) &&
         validators.year_level(form.year_level);
 
-    const onChange = (field: string, value: any) => {
-        setForm((s) => ({ ...s, [field]: value }));
-    };
-
+    const onChange = (field: string, value: any) => setForm((s) => ({ ...s, [field]: value }));
     const markTouched = (field: string) => setTouched((t) => ({ ...t, [field]: true }));
 
     const handleSubmit = async () => {
-        // mark all fields touched so user sees errors if any
-        setTouched({
-            first_name: true,
-            last_name: true,
-            email: true,
-            program_id: true,
-            year_level: true,
-        });
+        const requiredFields = ["first_name", "last_name", "email", "program_id", "year_level"];
+        const newTouched = { ...touched };
+        requiredFields.forEach((f) => (newTouched[f] = true));
+        setTouched(newTouched);
 
-        if (!isValid) return toast.error("Fix the errors before submitting.");
+        for (const field of requiredFields) {
+            if (!validators[field as keyof typeof validators](form[field as keyof typeof form])) {
+                firstInvalidRef.current = document.querySelector(`[name="${field}"]`) as HTMLInputElement;
+                firstInvalidRef.current?.focus();
+                return toast.error("Fix the errors before submitting.");
+            }
+        }
+
+        if (!isValid) return;
 
         setSubmitting(true);
 
         try {
             await addRegistration({
                 ...form,
+                first_name: form.first_name.trim(),
+                last_name: form.last_name.trim(),
+                middle_name: form.middle_name.trim(),
+                email: form.email.trim(),
                 program_id: Number(form.program_id),
                 year_level: Number(form.year_level),
                 created_at: new Date().toISOString(),
@@ -108,7 +96,6 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
 
             toast.success("Registration submitted — Admin will review it.");
 
-            // keep program/year context for bulk entries, reset other fields
             setForm((s) => ({
                 first_name: "",
                 last_name: "",
@@ -120,7 +107,6 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
                 year_level: s.year_level,
                 is_returning_student: false,
             }));
-
             setTouched({});
         } catch (err: any) {
             toast.error(err?.message || "Failed to submit registration.");
@@ -128,6 +114,10 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
             setSubmitting(false);
         }
     };
+
+    // helper to style inputs dynamically
+    const inputClass = (field: string) =>
+        touched[field] ? (errors[field] ? "border-destructive" : "border-green-500") : "";
 
     return (
         <div className="max-w-lg w-full mx-auto space-y-6">
@@ -141,29 +131,27 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
                 <div>
                     <label className="text-xs font-medium mb-1 block">First name *</label>
                     <Input
+                        name="first_name"
                         placeholder="First Name"
+                        className={inputClass("first_name")}
                         value={form.first_name}
                         onChange={(e) => onChange("first_name", e.target.value)}
                         onBlur={() => markTouched("first_name")}
-                        aria-invalid={!!errors.first_name}
-                        aria-describedby={errors.first_name ? "err-first_name" : undefined}
                     />
-                    {errors.first_name && <p id="err-first_name" className="text-xs text-destructive mt-1">{errors.first_name}</p>}
+                    {errors.first_name && <p className="text-xs text-destructive mt-1">{errors.first_name}</p>}
                 </div>
-
                 <div>
                     <label className="text-xs font-medium mb-1 block">Last name *</label>
                     <Input
+                        name="last_name"
                         placeholder="Last Name"
+                        className={inputClass("last_name")}
                         value={form.last_name}
                         onChange={(e) => onChange("last_name", e.target.value)}
                         onBlur={() => markTouched("last_name")}
-                        aria-invalid={!!errors.last_name}
-                        aria-describedby={errors.last_name ? "err-last_name" : undefined}
                     />
-                    {errors.last_name && <p id="err-last_name" className="text-xs text-destructive mt-1">{errors.last_name}</p>}
+                    {errors.last_name && <p className="text-xs text-destructive mt-1">{errors.last_name}</p>}
                 </div>
-
                 <div className="md:col-span-2">
                     <label className="text-xs font-medium mb-1 block">Middle name</label>
                     <Input
@@ -179,17 +167,16 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
                 <div>
                     <label className="text-xs font-medium mb-1 block">Email *</label>
                     <Input
+                        name="email"
                         placeholder="example@domain.com"
                         type="email"
+                        className={inputClass("email")}
                         value={form.email}
                         onChange={(e) => onChange("email", e.target.value)}
                         onBlur={() => markTouched("email")}
-                        aria-invalid={!!errors.email}
-                        aria-describedby={errors.email ? "err-email" : undefined}
                     />
-                    {errors.email && <p id="err-email" className="text-xs text-destructive mt-1">{errors.email}</p>}
+                    {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
                 </div>
-
                 <div>
                     <label className="text-xs font-medium mb-1 block">Contact number</label>
                     <Input
@@ -198,7 +185,6 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
                         onChange={(e) => onChange("contact_number", e.target.value)}
                     />
                 </div>
-
                 <div className="md:col-span-2">
                     <label className="text-xs font-medium mb-1 block">Address</label>
                     <Input
@@ -211,7 +197,7 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
 
             {/* Program & Year */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="min-w-0">
+                <div>
                     <label className="text-xs font-medium mb-1 block">Program *</label>
                     <Select
                         onValueChange={(v) => {
@@ -220,38 +206,36 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
                             markTouched("program_id");
                         }}
                     >
-                        <SelectTrigger className="w-full truncate">
+                        <SelectTrigger className={`w-full ${inputClass("program_id")}`}>
                             <SelectValue placeholder="Choose program" />
                         </SelectTrigger>
                         <SelectContent>
-                            {programs.map((p: any) => (
-                                <SelectItem key={p.id} value={String(p.id)} className="truncate">
-                                    {p.program_name}
-                                </SelectItem>
+                            {programs.map((p: Program) => (
+                                <SelectItem key={p.id} value={String(p.id)}>{p.program_name}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     {errors.program_id && <p className="text-xs text-destructive mt-1">{errors.program_id}</p>}
-                    <p className="text-xs text-muted-foreground mt-1">Choose the program the student will enroll to.</p>
                 </div>
-
-                <div className="min-w-0">
+                <div>
                     <label className="text-xs font-medium mb-1 block">Year level *</label>
                     <Select
                         onValueChange={(v) => {
                             onChange("year_level", Number(v));
                             markTouched("year_level");
                         }}
-                        disabled={!form.program_id}
+                        disabled={!form.program_id || programYears.length === 0} // <--- updated
                     >
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Choose year" />
                         </SelectTrigger>
                         <SelectContent>
                             {programYears.length === 0 ? (
-                                <SelectItem key="none" value="0">No years found</SelectItem>
+                                <SelectItem key="none" value="0">
+                                    No years found
+                                </SelectItem>
                             ) : (
-                                programYears.map((y: any) => (
+                                programYears.map((y: Year) => (
                                     <SelectItem key={y.year_id} value={String(y.year_level)}>
                                         Year {y.year_level}
                                     </SelectItem>
@@ -259,6 +243,7 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
                             )}
                         </SelectContent>
                     </Select>
+
                     {errors.year_level && <p className="text-xs text-destructive mt-1">{errors.year_level}</p>}
                 </div>
             </div>
@@ -274,18 +259,9 @@ export default function RegistrationForm({ programs = [], years = [] }: { progra
 
             {/* Submit */}
             <div>
-                <Button
-                    onClick={handleSubmit}
-                    disabled={submitting || !isValid}
-                    className="w-full"
-                >
+                <Button onClick={handleSubmit} disabled={submitting || !isValid} className="w-full">
                     {submitting ? "Submitting..." : "Register"}
                 </Button>
-                {!isValid && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                        Required: First name, Last name, valid Email, Program, Year level.
-                    </p>
-                )}
             </div>
         </div>
     );

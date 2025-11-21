@@ -67,7 +67,7 @@ export default function AdminDashboard() {
     ];
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-fit">
             {/* Mobile Menu */}
             <Button
                 variant="outline"

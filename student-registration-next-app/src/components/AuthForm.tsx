@@ -57,7 +57,7 @@ export default function AuthForm() {
             if (adminEmails.includes(email)) {
                 router.replace("/admin/dashboard");
             } else {
-                router.replace("/student-dashboard");
+                router.replace("/student/dashboard");
             }
         } catch (err: any) {
             toast.error("Login Failed", { description: err.message || "Unexpected error" });
