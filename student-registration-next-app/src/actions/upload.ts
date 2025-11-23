@@ -33,7 +33,13 @@ export async function uploadDocumentAction(formData: FormData) {
         .eq("id", enrollmentId)
         .single();
 
-    if (!enrollment || enrollment.students.auth_user_id !== user.id) {
+    // enrollment.students is returned as an array by the join; verify it and check the first student's auth_user_id
+    if (
+        !enrollment ||
+        !Array.isArray(enrollment.students) ||
+        enrollment.students.length === 0 ||
+        enrollment.students[0].auth_user_id !== user.id
+    ) {
         return { error: "Unauthorized: Enrollment not found or doesn't belong to you", url: null };
     }
 
