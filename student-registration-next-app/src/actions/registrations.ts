@@ -29,7 +29,7 @@ export const addRegistration = async (data: {
     }
 };
 
-export const updateRegistration = async (id: number, updated: Partial<typeof data>) => {
+export const updateRegistration = async (id: number, updated: any) => {
     const supabase = await createClient();
     const { data, error } = await supabase
         .from("registrations")
