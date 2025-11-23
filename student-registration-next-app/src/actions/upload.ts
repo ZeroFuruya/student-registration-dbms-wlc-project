@@ -45,6 +45,7 @@ export async function uploadDocumentAction(formData: FormData) {
         .upload(filePath, file);
 
     if (uploadError) {
+        console.error("Upload error:", uploadError);
         return { error: uploadError.message, url: null };
     }
 

@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-    PieChart, Pie, Cell, Legend
+    PieChart, Pie, Cell, Legend, LineChart, Line, CartesianGrid, Area, AreaChart
 } from "recharts";
 import { getAnalyticsData } from "@/actions/admin";
 import {
@@ -17,58 +17,102 @@ import {
     CalendarClock,
     FileText,
     Menu,
-    X
+    X,
+    Users,
+    TrendingUp,
+    DollarSign,
+    ClipboardCheck
 } from "lucide-react";
 
-interface Analytics {
-    totalStudents: number;
-    pendingRegistrations: number;
-    approvedRegistrations: number;
-    programsCount: number;
-    coursesCount: number;
-    upcomingEnrollments: number;
-}
-
-const COLORS = ["#facc15", "#4ade80", "#f87171"]; // Pending, Approved, Upcoming
+const COLORS = {
+    primary: "#4E9F3D",
+    warning: "#facc15",
+    success: "#4ade80",
+    danger: "#f87171",
+    info: "#60a5fa",
+    purple: "#a78bfa",
+};
 
 const navItems = [
     { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/registrations-dashboard", label: "Registrations", icon: UserCheck },
     { href: "/admin/programs-management", label: "Programs", icon: GraduationCap },
     { href: "/admin/courses-management", label: "Courses", icon: BookOpen },
-    { href: "/admin/upcoming-enrollments", label: "Enrollments", icon: CalendarClock },
-    { href: "/admin/enrollment-documents", label: "Documents", icon: FileText },
+    { href: "/admin/enrollments-management", label: "Enrollments", icon: CalendarClock },
+    { href: "/admin/students-management", label: "Students", icon: FileText },
 ];
 
 export default function AdminDashboard() {
-    const [analytics, setAnalytics] = useState<Analytics | null>(null);
+    const [analytics, setAnalytics] = useState<any>(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchData() {
-            const data = await getAnalyticsData();
-            setAnalytics(data);
+            try {
+                const data = await getAnalyticsData();
+                setAnalytics(data);
+            } catch (error) {
+                console.error("Failed to fetch analytics:", error);
+            } finally {
+                setLoading(false);
+            }
         }
         fetchData();
     }, []);
 
-    const registrationStatusData = analytics ? [
-        { name: "Pending", value: analytics.pendingRegistrations },
-        { name: "Approved", value: analytics.approvedRegistrations },
-        { name: "Upcoming", value: analytics.upcomingEnrollments },
-    ] : [];
+    if (loading) {
+        return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    }
 
-    const monthlyData = [
-        { month: "Jan", registrations: 40 },
-        { month: "Feb", registrations: 55 },
-        { month: "Mar", registrations: 30 },
-        { month: "Apr", registrations: 75 },
-        { month: "May", registrations: 60 },
+    // Transform data for charts
+    const registrationStatusData = [
+        { name: "Pending", value: analytics.pendingRegistrations, color: COLORS.warning },
+        { name: "Approved", value: analytics.approvedRegistrations, color: COLORS.success },
+        { name: "Rejected", value: analytics.rejectedRegistrations, color: COLORS.danger },
+    ];
+
+    const enrollmentStatusData = [
+        { name: "Draft", value: analytics.draftEnrollments, color: "#94a3b8" },
+        { name: "For Review", value: analytics.forReviewEnrollments, color: COLORS.warning },
+        { name: "Approved", value: analytics.approvedEnrollments, color: COLORS.success },
+        { name: "Rejected", value: analytics.rejectedEnrollments, color: COLORS.danger },
+    ];
+
+    const paymentStatusData = [
+        { name: "Paid", value: analytics.paidEnrollments, color: COLORS.success },
+        { name: "Partial", value: analytics.partialEnrollments, color: COLORS.warning },
+        { name: "Unpaid", value: analytics.unpaidEnrollments, color: COLORS.danger },
+    ];
+
+    const programDistributionData = Object.entries(analytics.programDistribution || {}).map(([name, value]) => ({
+        name,
+        value,
+    }));
+
+    const yearLevelData = Object.entries(analytics.yearLevelDistribution || {}).map(([name, value]) => ({
+        name,
+        value,
+    }));
+
+    const monthlyRegistrationsData = Object.entries(analytics.monthlyRegistrations || {}).map(([month, count]) => ({
+        month,
+        registrations: count,
+    }));
+
+    const monthlyEnrollmentsData = Object.entries(analytics.monthlyEnrollments || {}).map(([month, count]) => ({
+        month,
+        enrollments: count,
+    }));
+
+    const revenueData = [
+        { name: "Total Revenue", value: analytics.totalRevenue, color: COLORS.success },
+        { name: "Pending", value: analytics.pendingRevenue, color: COLORS.warning },
     ];
 
     return (
-        <div className="flex min-h-fit">
-            {/* Mobile Menu */}
+        <div className="flex min-h-screen">
+            {/* Mobile Menu Button */}
             <Button
                 variant="outline"
                 size="icon"
@@ -80,11 +124,11 @@ export default function AdminDashboard() {
 
             {/* Sidebar */}
             <aside className={`
-        fixed lg:static inset-y-0 left-0 z-40
-        w-64 bg-background border-r
-        transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
+                fixed lg:static inset-y-0 left-0 z-40
+                w-64 bg-background border-r
+                transform transition-transform duration-300 ease-in-out
+                ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            `}>
                 <div className="p-6 border-b">
                     <h2 className="text-xl font-bold">Admin Panel</h2>
                 </div>
@@ -117,53 +161,177 @@ export default function AdminDashboard() {
             )}
 
             {/* Main Content */}
-            <main className="flex-1 p-6">
+            <main className="flex-1 p-6 overflow-y-auto">
                 <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-                {/* Stats */}
-                {analytics && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-                        <Card>
-                            <CardHeader>Total Students</CardHeader>
-                            <CardContent className="text-3xl font-extrabold">{analytics.totalStudents}</CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>Pending Registrations</CardHeader>
-                            <CardContent className="text-3xl font-extrabold">{analytics.pendingRegistrations}</CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>Upcoming Enrollments</CardHeader>
-                            <CardContent className="text-3xl font-extrabold">{analytics.upcomingEnrollments}</CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>Programs</CardHeader>
-                            <CardContent className="text-3xl font-extrabold">{analytics.programsCount}</CardContent>
-                        </Card>
-                    </div>
-                )}
-
-                {/* Charts */}
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+                {/* Key Stats */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     <Card>
-                        <CardHeader>Monthly Registrations</CardHeader>
-                        <CardContent className="h-72">
+                        <CardHeader className="pb-2">
+                            <CardDescription className="flex items-center gap-2">
+                                <Users className="h-4 w-4" />
+                                Total Students
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-3xl font-bold">{analytics.totalStudents}</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardDescription className="flex items-center gap-2">
+                                <ClipboardCheck className="h-4 w-4" />
+                                Pending Registrations
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-3xl font-bold text-yellow-600">{analytics.pendingRegistrations}</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardDescription className="flex items-center gap-2">
+                                <TrendingUp className="h-4 w-4" />
+                                Active Enrollments
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-3xl font-bold text-green-600">{analytics.approvedEnrollments}</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardDescription className="flex items-center gap-2">
+                                <DollarSign className="h-4 w-4" />
+                                Total Revenue
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-3xl font-bold text-green-600">₱{analytics.totalRevenue.toLocaleString()}</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Expected: ₱{analytics.expectedRevenue.toLocaleString()}
+                            </p>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Revenue Overview */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <Card className="lg:col-span-2">
+                        <CardHeader>
+                            <CardTitle>Revenue Collection Status</CardTitle>
+                            <CardDescription>
+                                {((analytics.totalRevenue / analytics.expectedRevenue) * 100).toFixed(1)}% collected
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={monthlyData} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
-                                    <XAxis dataKey="month" />
+                                <BarChart data={revenueData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
                                     <YAxis />
-                                    <Tooltip />
-                                    <Bar dataKey="registrations" fill="#4E9F3D" radius={[6, 6, 0, 0]} />
+                                    <Tooltip formatter={(value) => `₱${Number(value).toLocaleString()}`} />
+                                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                                        {revenueData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
                         </CardContent>
                     </Card>
 
                     <Card>
-                        <CardHeader>Registration Status</CardHeader>
-                        <CardContent className="h-72 flex justify-center items-center">
+                        <CardHeader>
+                            <CardTitle>Payment Status</CardTitle>
+                            <CardDescription>Enrollment payment breakdown</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-64 flex justify-center items-center">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={paymentStatusData}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        cx="50%"
+                                        cy="50%"
+                                        outerRadius={80}
+                                        label
+                                    >
+                                        {paymentStatusData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                    <Legend />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Trends */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Monthly Registrations Trend</CardTitle>
+                            <CardDescription>Last 6 months registration activity</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-64">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={monthlyRegistrationsData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="month" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="registrations"
+                                        stroke={COLORS.primary}
+                                        fill={COLORS.primary}
+                                        fillOpacity={0.6}
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Monthly Enrollments Trend</CardTitle>
+                            <CardDescription>Last 6 months enrollment activity</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-64">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={monthlyEnrollmentsData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="month" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="enrollments"
+                                        stroke={COLORS.info}
+                                        strokeWidth={3}
+                                        dot={{ fill: COLORS.info, r: 4 }}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Status Breakdowns */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Registration Status</CardTitle>
+                            <CardDescription>Current registration pipeline</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-64 flex justify-center items-center">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
@@ -172,11 +340,85 @@ export default function AdminDashboard() {
                                         nameKey="name"
                                         cx="50%"
                                         cy="50%"
-                                        outerRadius={90}
+                                        outerRadius={80}
                                         label
                                     >
                                         {registrationStatusData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                    <Legend />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Enrollment Status</CardTitle>
+                            <CardDescription>Current enrollment pipeline</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-64">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={enrollmentStatusData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                                        {enrollmentStatusData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Distribution Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Students by Program</CardTitle>
+                            <CardDescription>Program enrollment distribution</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-64">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={programDistributionData} layout="vertical">
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis type="number" />
+                                    <YAxis dataKey="name" type="category" width={100} />
+                                    <Tooltip />
+                                    <Bar dataKey="value" fill={COLORS.purple} radius={[0, 8, 8, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Students by Year Level</CardTitle>
+                            <CardDescription>Year level distribution</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-64 flex justify-center items-center">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={yearLevelData}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        cx="50%"
+                                        cy="50%"
+                                        outerRadius={80}
+                                        label
+                                    >
+                                        {yearLevelData.map((entry, index) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={Object.values(COLORS)[index % Object.values(COLORS).length]}
+                                            />
                                         ))}
                                     </Pie>
                                     <Tooltip />

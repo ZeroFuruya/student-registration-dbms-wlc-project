@@ -7,24 +7,12 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * Feel free to modify this pattern to include more paths.
-         */
         "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
     ],
 }
 
-
 export async function updateSession(request: NextRequest) {
-    let supabaseResponse = NextResponse.next({
-        request,
-    })
-
-    console.log("Middleware: updateSession called for ", request.nextUrl.pathname)
+    let supabaseResponse = NextResponse.next({ request })
 
     const supabase = createServerClient(
         process.env.SUPABASE_URL!,
@@ -36,47 +24,56 @@ export async function updateSession(request: NextRequest) {
                 },
                 setAll(cookiesToSet) {
                     cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-                    supabaseResponse = NextResponse.next({
-                        request,
-                    })
+                    supabaseResponse = NextResponse.next({ request })
                     cookiesToSet.forEach(({ name, value }) => supabaseResponse.cookies.set(name, value))
                 },
             },
         }
     )
 
-    // IMPORTANT: Avoid writing any logic between createServerClient and
-    // supabase.auth.getClaims(). A simple mistake could make it very hard to debug
-    // issues with users being randomly logged out.
+    const { data: userData } = await supabase.auth.getUser()
+    const user = userData?.user
+    const pathname = request.nextUrl.pathname
 
-    // IMPORTANT: Don't remove getClaims()
-    const { data } = await supabase.auth.getClaims()
+    // Public routes that don't require authentication
+    const publicRoutes = ['/login', '/auth', '/register', '/unauthorized']
+    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
 
-    const user = data?.claims
+    // Get admin status
+    const adminEmails = process.env.ADMIN_EMAILS?.split(",") || []
+    const isAdmin = user && adminEmails.includes(user.email || "")
 
-    if (
-        !user &&
-        !request.nextUrl.pathname.startsWith('/login') &&
-        !request.nextUrl.pathname.startsWith('/auth')
-    ) {
-        // no user, potentially respond by redirecting the user to the login page
+    // Redirect logged-in users away from home page
+    if (user && pathname === '/') {
+        const url = request.nextUrl.clone()
+        url.pathname = isAdmin ? '/admin/dashboard' : '/student/dashboard'
+        return NextResponse.redirect(url)
+    }
+
+    // Redirect unauthenticated users to login (except for public routes and home)
+    if (!user && !isPublicRoute && pathname !== '/') {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
         return NextResponse.redirect(url)
     }
 
-    // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
-    // creating a new response object with NextResponse.next() make sure to:
-    // 1. Pass the request in it, like so:
-    //    const myNewResponse = NextResponse.next({ request })
-    // 2. Copy over the cookies, like so:
-    //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-    // 3. Change the myNewResponse object to fit your needs, but avoid changing
-    //    the cookies!
-    // 4. Finally:
-    //    return myNewResponse
-    // If this is not done, you may be causing the browser and server to go out
-    // of sync and terminate the user's session prematurely!
+    // Protect admin routes
+    if (pathname.startsWith("/admin")) {
+        if (!user || !adminEmails.includes(user.email || "")) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/unauthorized'
+            return NextResponse.redirect(url)
+        }
+    }
+
+    // Prevent admins from accessing student routes
+    if (pathname.startsWith("/student")) {
+        if (isAdmin) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/admin/dashboard'
+            return NextResponse.redirect(url)
+        }
+    }
 
     return supabaseResponse
 }

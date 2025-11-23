@@ -13,6 +13,7 @@ import {
     SelectItem,
     SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 interface Props {
     studentId: number;
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export default function Enrollment({ studentId, initialEnrollments }: Props) {
+    const router = useRouter();
     const [enrollments, setEnrollments] = useState(initialEnrollments);
     const [newForm, setNewForm] = useState({ academic_year: "", semester: 1 });
     const [uploadingStates, setUploadingStates] = useState<Record<number, boolean>>({});
@@ -120,6 +122,12 @@ export default function Enrollment({ studentId, initialEnrollments }: Props) {
 
         const file = fileInput.files[0];
 
+        // <-- SIZE CHECK HERE -->
+        const MAX_SIZE_MB = 19;
+        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+            return alert(`File is too large. Max allowed size is ${MAX_SIZE_MB} MB.`);
+        }
+
         // Set uploading state
         setUploadingStates(prev => ({ ...prev, [enrollmentId]: true }));
 
@@ -130,35 +138,36 @@ export default function Enrollment({ studentId, initialEnrollments }: Props) {
             formData.append('enrollmentId', enrollmentId.toString());
             formData.append('documentType', type);
 
-            // Call server action
             const result = await uploadDocumentAction(formData);
 
             if (result.error) {
-                alert(`Upload failed: ${result.error}`);
+                alert(`Uploading failed: ${result.error}`);
+                router.refresh();
                 return;
             }
 
             if (!result.url) {
                 alert('Upload failed: No URL returned');
+                router.refresh();
                 return;
             }
 
-            // Add document to enrollment
             await handleAddDocument(enrollmentId, type, result.url);
 
-            // Clear inputs
             fileInput.value = "";
             (document.getElementById(`doc-type-${enrollmentId}`) as HTMLInputElement).value = "";
 
             alert('Document uploaded successfully!');
         } catch (err) {
             console.error("Upload error:", err);
+            router.refresh();
             alert(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
         } finally {
-            // Clear uploading state
             setUploadingStates(prev => ({ ...prev, [enrollmentId]: false }));
+            router.refresh();
         }
     };
+
 
     return (
         <div>
@@ -224,13 +233,18 @@ export default function Enrollment({ studentId, initialEnrollments }: Props) {
 
                         <h3 className="mt-2 font-bold">Documents</h3>
                         <ul className="list-disc ml-6">
-                            {e.enrollment_documents?.length
-                                ? e.enrollment_documents.map((doc: any) => (
-                                    <li key={doc.id}>
-                                        {doc.document_type} — {doc.status}
-                                    </li>
-                                ))
-                                : "No documents yet."}
+                            {e.enrollment_documents && e.enrollment_documents.length > 0 ? (
+                                e.enrollment_documents
+                                    .filter((doc: any) => doc !== null)   // ⬅️ stops the crash
+                                    .map((doc: any) => (
+                                        <li key={doc.id}>
+                                            {doc.document_type ?? "Unknown Type"} — {doc.status ?? "Unknown Status"}
+                                        </li>
+                                    ))
+                            ) : (
+                                "No documents yet."
+                            )}
+
                         </ul>
 
                         {/* Upload Area */}

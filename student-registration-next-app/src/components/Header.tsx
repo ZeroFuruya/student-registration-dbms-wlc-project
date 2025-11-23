@@ -17,10 +17,12 @@ async function Header() {
 
     let homeHref = "/";
 
-    if (!user) {
-        homeHref = "/";
-    } else if (adminEmails.includes(user.email)) {
-        homeHref = "/admin/dashboard";
+    if (user) {
+        if (adminEmails.includes(user.email)) {
+            homeHref = "/admin/dashboard";
+        } else {
+            homeHref = "/student/dashboard";
+        }
     }
 
     return (
