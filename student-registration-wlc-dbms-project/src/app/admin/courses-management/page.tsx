@@ -1,7 +1,6 @@
 import { createClient, getUser } from "@/auth/server";
 import CoursesManager from "./CoursesManager";
 import { Database } from "@/types/supabase";
-import { requireAdmin } from "@/auth/adminAuth";
 
 export default async function CoursesManagementPage() {
     const user = await getUser();
@@ -10,30 +9,34 @@ export default async function CoursesManagementPage() {
         return <div className="p-8 text-red-500">Access Denied: You must log in.</div>;
     }
 
-    const adminEmails = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",") : []; // Change to your real admin email(s)
+    const adminEmails = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",") : [];
 
-    if (!adminEmails.includes(user.email)) {
+    if (!user.email || !adminEmails.includes(user.email)) {
         return <div className="p-8 text-red-500">Access Denied: You are not an admin.</div>;
     }
+
     const supabase = await createClient();
 
     // Fetch courses with their year and program info
     const { data: courses } = await supabase
-        .from<Database["public"]["Tables"]["courses"]["Row"]>("courses")
+        .from("courses")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .returns<Database["public"]["Tables"]["courses"]["Row"][]>();
 
     // Fetch years to get program/year mapping
     const { data: years } = await supabase
-        .from<Database["public"]["Tables"]["years"]["Row"]>("years")
+        .from("years")
         .select("*")
-        .order("year_level", { ascending: true });
+        .order("year_level", { ascending: true })
+        .returns<Database["public"]["Tables"]["years"]["Row"][]>();
 
     // Fetch programs
     const { data: programs } = await supabase
-        .from<Database["public"]["Tables"]["programs"]["Row"]>("programs")
+        .from("programs")
         .select("*")
-        .order("program_name", { ascending: true });
+        .order("program_name", { ascending: true })
+        .returns<Database["public"]["Tables"]["programs"]["Row"][]>();
 
     return (
         <div className="p-6 space-y-6">

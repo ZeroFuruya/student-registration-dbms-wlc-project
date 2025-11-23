@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>[root-of-the-server]__974941ed._.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../../doc-style.css" />
+  <script src="../../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../../";
+    var thisFile = ".next/build/chunks/[root-of-the-server]__974941ed._.js";
+    var defaultSidebar = true;
+  </script>
+  <script src="../../../doc-script.js"></script>
+
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+
+      <div class="heading h1">
+        <a href="#sourcemappingurl5broot-of-the-server5d__974941ed._.js.map">sourceMappingURL=%5Broot-of-the-server%5D__974941ed._.js.map</a>
+      </div>
+
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container">
+    <div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+    
+      <tr>
+        <td class="docs">
+          <h1>[root-of-the-server]__974941ed._.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+    
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1"></a>
+</div>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript"><span class="hljs-built_in">module</span>.exports = [
+<span class="hljs-string">"[turbopack-node]/globals.ts [postcss] (ecmascript)"</span>, (<span class="hljs-function">(<span class="hljs-params">__turbopack_context__, <span class="hljs-built_in">module</span>, exports</span>) =&gt;</span> {
+
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2"></a>
+</div>
+<p>@ts-ignore</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">process.turbopack = {};
+}),
+<span class="hljs-string">"[externals]/node:net [external] (node:net, cjs)"</span>, (<span class="hljs-function">(<span class="hljs-params">__turbopack_context__, <span class="hljs-built_in">module</span>, exports</span>) =&gt;</span> {
+
+<span class="hljs-keyword">const</span> mod = __turbopack_context__.x(<span class="hljs-string">"node:net"</span>, () =&gt; <span class="hljs-built_in">require</span>(<span class="hljs-string">"node:net"</span>));
+
+<span class="hljs-built_in">module</span>.exports = mod;
+}),
+<span class="hljs-string">"[externals]/node:stream [external] (node:stream, cjs)"</span>, (<span class="hljs-function">(<span class="hljs-params">__turbopack_context__, <span class="hljs-built_in">module</span>, exports</span>) =&gt;</span> {
+
+<span class="hljs-keyword">const</span> mod = __turbopack_context__.x(<span class="hljs-string">"node:stream"</span>, () =&gt; <span class="hljs-built_in">require</span>(<span class="hljs-string">"node:stream"</span>));
+
+<span class="hljs-built_in">module</span>.exports = mod;
+}),
+<span class="hljs-string">"[turbopack-node]/compiled/stacktrace-parser/index.js [postcss] (ecmascript)"</span>, (<span class="hljs-function">(<span class="hljs-params">__turbopack_context__</span>) =&gt;</span> {
+<span class="hljs-meta">"use strict"</span>;
+
+__turbopack_context__.s([
+    <span class="hljs-string">"parse"</span>,
+    ()=&gt;parse
+]);
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> __nccwpck_require__ !== <span class="hljs-string">"undefined"</span>) __nccwpck_require__.ab = (<span class="hljs-string">"TURBOPACK compile-time value"</span>, <span class="hljs-string">"/ROOT/compiled/stacktrace-parser"</span>) + <span class="hljs-string">"/"</span>;
+<span class="hljs-keyword">var</span> n = <span class="hljs-string">"&lt;unknown&gt;"</span>;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parse</span>(<span class="hljs-params">e</span>) </span>{
+    <span class="hljs-keyword">var</span> r = e.split(<span class="hljs-string">"\n"</span>);
+    <span class="hljs-keyword">return</span> r.reduce(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, r</span>) </span>{
+        <span class="hljs-keyword">var</span> n = parseChrome(r) || parseWinjs(r) || parseGecko(r) || parseNode(r) || parseJSC(r);
+        <span class="hljs-keyword">if</span> (n) {
+            e.push(n);
+        }
+        <span class="hljs-keyword">return</span> e;
+    }, []);
+}
+<span class="hljs-keyword">var</span> a = <span class="hljs-regexp">/^\s*at (.*?) ?\(((?:file|https?|blob|chrome-extension|native|eval|webpack|&lt;anonymous&gt;|\/|[a-z]:\\|\\\\).*?)(?::(\d+))?(?::(\d+))?\)?\s*$/i</span>;
+<span class="hljs-keyword">var</span> l = <span class="hljs-regexp">/\((\S*)(?::(\d+))(?::(\d+))\)/</span>;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseChrome</span>(<span class="hljs-params">e</span>) </span>{
+    <span class="hljs-keyword">var</span> r = a.exec(e);
+    <span class="hljs-keyword">if</span> (!r) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">var</span> u = r[<span class="hljs-number">2</span>] &amp;&amp; r[<span class="hljs-number">2</span>].indexOf(<span class="hljs-string">"native"</span>) === <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">var</span> t = r[<span class="hljs-number">2</span>] &amp;&amp; r[<span class="hljs-number">2</span>].indexOf(<span class="hljs-string">"eval"</span>) === <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">var</span> i = l.exec(r[<span class="hljs-number">2</span>]);
+    <span class="hljs-keyword">if</span> (t &amp;&amp; i != <span class="hljs-literal">null</span>) {
+        r[<span class="hljs-number">2</span>] = i[<span class="hljs-number">1</span>];
+        r[<span class="hljs-number">3</span>] = i[<span class="hljs-number">2</span>];
+        r[<span class="hljs-number">4</span>] = i[<span class="hljs-number">3</span>];
+    }
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">file</span>: !u ? r[<span class="hljs-number">2</span>] : <span class="hljs-literal">null</span>,
+        <span class="hljs-attr">methodName</span>: r[<span class="hljs-number">1</span>] || n,
+        <span class="hljs-attr">arguments</span>: u ? [
+            r[<span class="hljs-number">2</span>]
+        ] : [],
+        <span class="hljs-attr">lineNumber</span>: r[<span class="hljs-number">3</span>] ? +r[<span class="hljs-number">3</span>] : <span class="hljs-literal">null</span>,
+        <span class="hljs-attr">column</span>: r[<span class="hljs-number">4</span>] ? +r[<span class="hljs-number">4</span>] : <span class="hljs-literal">null</span>
+    };
+}
+<span class="hljs-keyword">var</span> u = <span class="hljs-regexp">/^\s*at (?:((?:\[object object\])?.+) )?\(?((?:file|ms-appx|https?|webpack|blob):.*?):(\d+)(?::(\d+))?\)?\s*$/i</span>;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseWinjs</span>(<span class="hljs-params">e</span>) </span>{
+    <span class="hljs-keyword">var</span> r = u.exec(e);
+    <span class="hljs-keyword">if</span> (!r) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">file</span>: r[<span class="hljs-number">2</span>],
+        <span class="hljs-attr">methodName</span>: r[<span class="hljs-number">1</span>] || n,
+        <span class="hljs-attr">arguments</span>: [],
+        <span class="hljs-attr">lineNumber</span>: +r[<span class="hljs-number">3</span>],
+        <span class="hljs-attr">column</span>: r[<span class="hljs-number">4</span>] ? +r[<span class="hljs-number">4</span>] : <span class="hljs-literal">null</span>
+    };
+}
+<span class="hljs-keyword">var</span> t = <span class="hljs-regexp">/^\s*(.*?)(?:\((.*?)\))?(?:^|@)((?:file|https?|blob|chrome|webpack|resource|\[native).*?|[^@]*bundle)(?::(\d+))?(?::(\d+))?\s*$/i</span>;
+<span class="hljs-keyword">var</span> i = <span class="hljs-regexp">/(\S+) line (\d+)(?: &gt; eval line \d+)* &gt; eval/i</span>;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseGecko</span>(<span class="hljs-params">e</span>) </span>{
+    <span class="hljs-keyword">var</span> r = t.exec(e);
+    <span class="hljs-keyword">if</span> (!r) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">var</span> a = r[<span class="hljs-number">3</span>] &amp;&amp; r[<span class="hljs-number">3</span>].indexOf(<span class="hljs-string">" &gt; eval"</span>) &gt; <span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">var</span> l = i.exec(r[<span class="hljs-number">3</span>]);
+    <span class="hljs-keyword">if</span> (a &amp;&amp; l != <span class="hljs-literal">null</span>) {
+        r[<span class="hljs-number">3</span>] = l[<span class="hljs-number">1</span>];
+        r[<span class="hljs-number">4</span>] = l[<span class="hljs-number">2</span>];
+        r[<span class="hljs-number">5</span>] = <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">file</span>: r[<span class="hljs-number">3</span>],
+        <span class="hljs-attr">methodName</span>: r[<span class="hljs-number">1</span>] || n,
+        <span class="hljs-attr">arguments</span>: r[<span class="hljs-number">2</span>] ? r[<span class="hljs-number">2</span>].split(<span class="hljs-string">","</span>) : [],
+        <span class="hljs-attr">lineNumber</span>: r[<span class="hljs-number">4</span>] ? +r[<span class="hljs-number">4</span>] : <span class="hljs-literal">null</span>,
+        <span class="hljs-attr">column</span>: r[<span class="hljs-number">5</span>] ? +r[<span class="hljs-number">5</span>] : <span class="hljs-literal">null</span>
+    };
+}
+<span class="hljs-keyword">var</span> s = <span class="hljs-regexp">/^\s*(?:([^@]*)(?:\((.*?)\))?@)?(\S.*?):(\d+)(?::(\d+))?\s*$/i</span>;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseJSC</span>(<span class="hljs-params">e</span>) </span>{
+    <span class="hljs-keyword">var</span> r = s.exec(e);
+    <span class="hljs-keyword">if</span> (!r) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">file</span>: r[<span class="hljs-number">3</span>],
+        <span class="hljs-attr">methodName</span>: r[<span class="hljs-number">1</span>] || n,
+        <span class="hljs-attr">arguments</span>: [],
+        <span class="hljs-attr">lineNumber</span>: +r[<span class="hljs-number">4</span>],
+        <span class="hljs-attr">column</span>: r[<span class="hljs-number">5</span>] ? +r[<span class="hljs-number">5</span>] : <span class="hljs-literal">null</span>
+    };
+}
+<span class="hljs-keyword">var</span> o = <span class="hljs-regexp">/^\s*at (?:((?:\[object object\])?[^\\/]+(?: \[as \S+\])?) )?\(?(.*?):(\d+)(?::(\d+))?\)?\s*$/i</span>;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseNode</span>(<span class="hljs-params">e</span>) </span>{
+    <span class="hljs-keyword">var</span> r = o.exec(e);
+    <span class="hljs-keyword">if</span> (!r) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">file</span>: r[<span class="hljs-number">2</span>],
+        <span class="hljs-attr">methodName</span>: r[<span class="hljs-number">1</span>] || n,
+        <span class="hljs-attr">arguments</span>: [],
+        <span class="hljs-attr">lineNumber</span>: +r[<span class="hljs-number">3</span>],
+        <span class="hljs-attr">column</span>: r[<span class="hljs-number">4</span>] ? +r[<span class="hljs-number">4</span>] : <span class="hljs-literal">null</span>
+    };
+}
+}),
+<span class="hljs-string">"[turbopack-node]/ipc/error.ts [postcss] (ecmascript)"</span>, (<span class="hljs-function">(<span class="hljs-params">__turbopack_context__</span>) =&gt;</span> {
+<span class="hljs-meta">"use strict"</span>;
+
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3"></a>
+</div>
+<p>merged from next.js
+https://github.com/vercel/next.js/blob/e657741b9908cf0044aaef959c0c4defb19ed6d8/packages/next/src/lib/is-error.ts
+https://github.com/vercel/next.js/blob/e657741b9908cf0044aaef959c0c4defb19ed6d8/packages/next/src/shared/lib/is-plain-object.ts</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">__turbopack_context__.s([
+    <span class="hljs-string">"default"</span>,
+    ()=&gt;isError,
+    <span class="hljs-string">"getProperError"</span>,
+    ()=&gt;getProperError
+]);
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isError</span>(<span class="hljs-params">err</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> err === <span class="hljs-string">'object'</span> &amp;&amp; err !== <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-string">'name'</span> <span class="hljs-keyword">in</span> err &amp;&amp; <span class="hljs-string">'message'</span> <span class="hljs-keyword">in</span> err;
+}
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getProperError</span>(<span class="hljs-params">err</span>) </span>{
+    <span class="hljs-keyword">if</span> (isError(err)) {
+        <span class="hljs-keyword">return</span> err;
+    }
+    <span class="hljs-keyword">if</span> (<span class="hljs-string">"TURBOPACK compile-time falsy"</span>, <span class="hljs-number">0</span>) <span class="hljs-comment">//TURBOPACK unreachable</span>
+    ;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(isPlainObject(err) ? <span class="hljs-built_in">JSON</span>.stringify(err) : err + <span class="hljs-string">''</span>);
+}
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getObjectClassLabel</span>(<span class="hljs-params">value</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.prototype.toString.call(value);
+}
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isPlainObject</span>(<span class="hljs-params">value</span>) </span>{
+    <span class="hljs-keyword">if</span> (getObjectClassLabel(value) !== <span class="hljs-string">'[object Object]'</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-keyword">const</span> prototype = <span class="hljs-built_in">Object</span>.getPrototypeOf(value);
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4"></a>
+</div>
+<div class="dox">
+<div class="summary">
+<p>this used to be previously:</p>
+</div>
+<div class="body">
+<p><code>return prototype === null || prototype === Object.prototype</code></p>
+<p>but Edge Runtime expose Object from vm, being that kind of type-checking wrongly fail.</p>
+<p>It was changed to the current implementation since it's resilient to serialization.
+return prototype === null || prototype.hasOwnProperty('isPrototypeOf');</p>
+</div>
+</div>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">}
+}),
+<span class="hljs-string">"[turbopack-node]/ipc/index.ts [postcss] (ecmascript)"</span>, (<span class="hljs-function">(<span class="hljs-params">__turbopack_context__</span>) =&gt;</span> {
+<span class="hljs-meta">"use strict"</span>;
+
+__turbopack_context__.s([
+    <span class="hljs-string">"IPC"</span>,
+    ()=&gt;IPC,
+    <span class="hljs-string">"structuredError"</span>,
+    ()=&gt;structuredError
+]);
+<span class="hljs-keyword">var</span> __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$externals$<span class="hljs-number">5</span>d2f$node$<span class="hljs-number">3</span>a$net__$<span class="hljs-number">5</span>b$external$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$node$<span class="hljs-number">3</span>a$net$<span class="hljs-number">2</span>c$__cjs$<span class="hljs-number">29</span>$__ = __turbopack_context__.i(<span class="hljs-string">"[externals]/node:net [external] (node:net, cjs)"</span>);
+<span class="hljs-keyword">var</span> __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$externals$<span class="hljs-number">5</span>d2f$node$<span class="hljs-number">3</span>a$stream__$<span class="hljs-number">5</span>b$external$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$node$<span class="hljs-number">3</span>a$stream$<span class="hljs-number">2</span>c$__cjs$<span class="hljs-number">29</span>$__ = __turbopack_context__.i(<span class="hljs-string">"[externals]/node:stream [external] (node:stream, cjs)"</span>);
+<span class="hljs-keyword">var</span> __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$turbopack$<span class="hljs-number">2</span>d$node$<span class="hljs-number">5</span>d2f$compiled$<span class="hljs-number">2</span>f$stacktrace$<span class="hljs-number">2</span>d$parser$<span class="hljs-number">2</span>f$index$<span class="hljs-number">2</span>e$js__$<span class="hljs-number">5</span>b$postcss$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$ecmascript$<span class="hljs-number">29</span>$__ = __turbopack_context__.i(<span class="hljs-string">"[turbopack-node]/compiled/stacktrace-parser/index.js [postcss] (ecmascript)"</span>);
+<span class="hljs-keyword">var</span> __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$turbopack$<span class="hljs-number">2</span>d$node$<span class="hljs-number">5</span>d2f$ipc$<span class="hljs-number">2</span>f$error$<span class="hljs-number">2</span>e$ts__$<span class="hljs-number">5</span>b$postcss$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$ecmascript$<span class="hljs-number">29</span>$__ = __turbopack_context__.i(<span class="hljs-string">"[turbopack-node]/ipc/error.ts [postcss] (ecmascript)"</span>);
+;
+;
+;
+;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">structuredError</span>(<span class="hljs-params">e</span>) </span>{
+    e = (<span class="hljs-number">0</span>, __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$turbopack$<span class="hljs-number">2</span>d$node$<span class="hljs-number">5</span>d2f$ipc$<span class="hljs-number">2</span>f$error$<span class="hljs-number">2</span>e$ts__$<span class="hljs-number">5</span>b$postcss$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$ecmascript$<span class="hljs-number">29</span>$__[<span class="hljs-string">"getProperError"</span>])(e);
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">name</span>: e.name,
+        <span class="hljs-attr">message</span>: e.message,
+        <span class="hljs-attr">stack</span>: <span class="hljs-keyword">typeof</span> e.stack === <span class="hljs-string">'string'</span> ? (<span class="hljs-number">0</span>, __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$turbopack$<span class="hljs-number">2</span>d$node$<span class="hljs-number">5</span>d2f$compiled$<span class="hljs-number">2</span>f$stacktrace$<span class="hljs-number">2</span>d$parser$<span class="hljs-number">2</span>f$index$<span class="hljs-number">2</span>e$js__$<span class="hljs-number">5</span>b$postcss$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$ecmascript$<span class="hljs-number">29</span>$__[<span class="hljs-string">"parse"</span>])(e.stack) : [],
+        <span class="hljs-attr">cause</span>: e.cause ? structuredError((<span class="hljs-number">0</span>, __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$turbopack$<span class="hljs-number">2</span>d$node$<span class="hljs-number">5</span>d2f$ipc$<span class="hljs-number">2</span>f$error$<span class="hljs-number">2</span>e$ts__$<span class="hljs-number">5</span>b$postcss$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$ecmascript$<span class="hljs-number">29</span>$__[<span class="hljs-string">"getProperError"</span>])(e.cause)) : <span class="hljs-literal">undefined</span>
+    };
+}
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createIpc</span>(<span class="hljs-params">port</span>) </span>{
+    <span class="hljs-keyword">const</span> socket = (<span class="hljs-number">0</span>, __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$externals$<span class="hljs-number">5</span>d2f$node$<span class="hljs-number">3</span>a$net__$<span class="hljs-number">5</span>b$external$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$node$<span class="hljs-number">3</span>a$net$<span class="hljs-number">2</span>c$__cjs$<span class="hljs-number">29</span>$__[<span class="hljs-string">"createConnection"</span>])({
+        port,
+        <span class="hljs-attr">host</span>: <span class="hljs-string">'127.0.0.1'</span>
+    });
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5"></a>
+</div>
+<div class="dox">
+<div class="summary">
+<p>A writable stream that writes to the socket.
+We don't write directly to the socket because we need to
+handle backpressure and wait for the socket to be drained
+before writing more data.
+const socketWritable = new <strong>TURBOPACK__imported__module</strong>$5b$externals$5d2f$node$3a$stream__$5b$external$5d$__$28$node$3a$stream$2c$<strong>cjs$29$</strong>[&quot;Writable&quot;]({</p>
+</div>
+<div class="body">
+</div>
+</div>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">        write (chunk, _enc, cb) {
+            <span class="hljs-keyword">if</span> (socket.write(chunk)) {
+                cb();
+            } <span class="hljs-keyword">else</span> {
+                socket.once(<span class="hljs-string">'drain'</span>, cb);
+            }
+        },
+        final (cb) {
+            socket.end(cb);
+        }
+    });
+    <span class="hljs-keyword">const</span> packetQueue = [];
+    <span class="hljs-keyword">const</span> recvPromiseResolveQueue = [];
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pushPacket</span>(<span class="hljs-params">packet</span>) </span>{
+        <span class="hljs-keyword">const</span> recvPromiseResolve = recvPromiseResolveQueue.shift();
+        <span class="hljs-keyword">if</span> (recvPromiseResolve != <span class="hljs-literal">null</span>) {
+            recvPromiseResolve(<span class="hljs-built_in">JSON</span>.parse(packet.toString(<span class="hljs-string">'utf8'</span>)));
+        } <span class="hljs-keyword">else</span> {
+            packetQueue.push(packet);
+        }
+    }
+    <span class="hljs-keyword">let</span> state = {
+        <span class="hljs-attr">type</span>: <span class="hljs-string">'waiting'</span>
+    };
+    <span class="hljs-keyword">let</span> buffer = Buffer.alloc(<span class="hljs-number">0</span>);
+    socket.once(<span class="hljs-string">'connect'</span>, ()=&gt;{
+        socket.setNoDelay(<span class="hljs-literal">true</span>);
+        socket.on(<span class="hljs-string">'data'</span>, (chunk)=&gt;{
+            buffer = Buffer.concat([
+                buffer,
+                chunk
+            ]);
+            loop: <span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
+                <span class="hljs-keyword">switch</span>(state.type){
+                    <span class="hljs-keyword">case</span> <span class="hljs-string">'waiting'</span>:
+                        {
+                            <span class="hljs-keyword">if</span> (buffer.length &gt;= <span class="hljs-number">4</span>) {
+                                <span class="hljs-keyword">const</span> length = buffer.readUInt32BE(<span class="hljs-number">0</span>);
+                                buffer = buffer.subarray(<span class="hljs-number">4</span>);
+                                state = {
+                                    <span class="hljs-attr">type</span>: <span class="hljs-string">'packet'</span>,
+                                    length
+                                };
+                            } <span class="hljs-keyword">else</span> {
+                                <span class="hljs-keyword">break</span> loop;
+                            }
+                            <span class="hljs-keyword">break</span>;
+                        }
+                    <span class="hljs-keyword">case</span> <span class="hljs-string">'packet'</span>:
+                        {
+                            <span class="hljs-keyword">if</span> (buffer.length &gt;= state.length) {
+                                <span class="hljs-keyword">const</span> packet = buffer.subarray(<span class="hljs-number">0</span>, state.length);
+                                buffer = buffer.subarray(state.length);
+                                state = {
+                                    <span class="hljs-attr">type</span>: <span class="hljs-string">'waiting'</span>
+                                };
+                                pushPacket(packet);
+                            } <span class="hljs-keyword">else</span> {
+                                <span class="hljs-keyword">break</span> loop;
+                            }
+                            <span class="hljs-keyword">break</span>;
+                        }
+                    <span class="hljs-attr">default</span>:
+                        invariant(state, (state)=&gt;<span class="hljs-string">`Unknown state type: <span class="hljs-subst">${state?.type}</span>`</span>);
+                }
+            }
+        });
+    });
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6"></a>
+</div>
+<p>When the socket is closed, this process is no longer needed.
+This might happen e. g. when parent process is killed or
+node.js pool is garbage collected.</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">    socket.once(<span class="hljs-string">'close'</span>, ()=&gt;{
+        process.exit(<span class="hljs-number">0</span>);
+    });
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7"></a>
+</div>
+<p>TODO(lukesandberg): some of the messages being sent are very large and contain lots
+of redundant information.  Consider adding gzip compression to our stream.</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSend</span>(<span class="hljs-params">message</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>)=&gt;</span>{
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8"></a>
+</div>
+<p>Reserve 4 bytes for our length prefix, we will over-write after encoding.</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">            <span class="hljs-keyword">const</span> packet = Buffer.from(<span class="hljs-string">'0000'</span> + message, <span class="hljs-string">'utf8'</span>);
+            packet.writeUInt32BE(packet.length - <span class="hljs-number">4</span>, <span class="hljs-number">0</span>);
+            socketWritable.write(packet, (err)=&gt;{
+                process.stderr.write(<span class="hljs-string">`TURBOPACK_OUTPUT_D\n`</span>);
+                process.stdout.write(<span class="hljs-string">`TURBOPACK_OUTPUT_D\n`</span>);
+                <span class="hljs-keyword">if</span> (err != <span class="hljs-literal">null</span>) {
+                    reject(err);
+                } <span class="hljs-keyword">else</span> {
+                    resolve();
+                }
+            });
+        });
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">send</span>(<span class="hljs-params">message</span>) </span>{
+        <span class="hljs-keyword">return</span> doSend(<span class="hljs-built_in">JSON</span>.stringify(message));
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sendReady</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> doSend(<span class="hljs-string">''</span>);
+    }
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-keyword">async</span> recv () {
+            <span class="hljs-keyword">const</span> packet = packetQueue.shift();
+            <span class="hljs-keyword">if</span> (packet != <span class="hljs-literal">null</span>) {
+                <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(packet.toString(<span class="hljs-string">'utf8'</span>));
+            }
+            <span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve</span>)=&gt;</span>{
+                recvPromiseResolveQueue.push(<span class="hljs-function">(<span class="hljs-params">result</span>)=&gt;</span>{
+                    resolve(result);
+                });
+            });
+            <span class="hljs-keyword">return</span> result;
+        },
+        send (message) {
+            <span class="hljs-keyword">return</span> send(message);
+        },
+        sendReady,
+        <span class="hljs-keyword">async</span> sendError (error) {
+            <span class="hljs-keyword">let</span> failed = <span class="hljs-literal">false</span>;
+            <span class="hljs-keyword">try</span> {
+                <span class="hljs-keyword">await</span> send({
+                    <span class="hljs-attr">type</span>: <span class="hljs-string">'error'</span>,
+                    ...structuredError(error)
+                });
+            } <span class="hljs-keyword">catch</span> (err) {
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9"></a>
+</div>
+<p>There's nothing we can do about errors that happen after this point, we can't tell anyone
+about them.</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">                <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'failed to send error back to rust:'</span>, err);
+                failed = <span class="hljs-literal">true</span>;
+            }
+            <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">res</span>)=&gt;</span>socket.end(<span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span>res()));
+            process.exit(failed ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>);
+        }
+    };
+}
+<span class="hljs-keyword">const</span> PORT = process.argv[<span class="hljs-number">2</span>];
+<span class="hljs-keyword">const</span> IPC = createIpc(<span class="hljs-built_in">parseInt</span>(PORT, <span class="hljs-number">10</span>));
+process.on(<span class="hljs-string">'uncaughtException'</span>, (err)=&gt;{
+    IPC.sendError(err);
+});
+<span class="hljs-keyword">const</span> improveConsole = <span class="hljs-function">(<span class="hljs-params">name, stream, addStack</span>)=&gt;</span>{
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10"></a>
+</div>
+<p>@ts-ignore</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">    <span class="hljs-keyword">const</span> original = <span class="hljs-built_in">console</span>[name];
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11"></a>
+</div>
+<p>@ts-ignore</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">    <span class="hljs-keyword">const</span> stdio = process[stream];
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12"></a>
+</div>
+<p>@ts-ignore</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">    <span class="hljs-built_in">console</span>[name] = <span class="hljs-function">(<span class="hljs-params">...args</span>)=&gt;</span>{
+        stdio.write(<span class="hljs-string">`TURBOPACK_OUTPUT_B\n`</span>);
+        original(...args);
+        <span class="hljs-keyword">if</span> (addStack) {
+            <span class="hljs-keyword">const</span> stack = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>().stack?.replace(<span class="hljs-regexp">/^.+\n.+\n/</span>, <span class="hljs-string">''</span>) + <span class="hljs-string">'\n'</span>;
+            stdio.write(<span class="hljs-string">'TURBOPACK_OUTPUT_S\n'</span>);
+            stdio.write(stack);
+        }
+        stdio.write(<span class="hljs-string">'TURBOPACK_OUTPUT_E\n'</span>);
+    };
+};
+improveConsole(<span class="hljs-string">'error'</span>, <span class="hljs-string">'stderr'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'warn'</span>, <span class="hljs-string">'stderr'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'count'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'trace'</span>, <span class="hljs-string">'stderr'</span>, <span class="hljs-literal">false</span>);
+improveConsole(<span class="hljs-string">'log'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'group'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'groupCollapsed'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'table'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'debug'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'info'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'dir'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'dirxml'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'timeEnd'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'timeLog'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'timeStamp'</span>, <span class="hljs-string">'stdout'</span>, <span class="hljs-literal">true</span>);
+improveConsole(<span class="hljs-string">'assert'</span>, <span class="hljs-string">'stderr'</span>, <span class="hljs-literal">true</span>);
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13"></a>
+</div>
+<div class="dox">
+<div class="summary">
+<p>Utility function to ensure all variants of an enum are handled.
+function invariant(never, computeMessage) {</p>
+</div>
+<div class="body">
+</div>
+</div>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`Invariant: <span class="hljs-subst">${computeMessage(never)}</span>`</span>);
+}
+}),
+<span class="hljs-string">"[turbopack-node]/ipc/evaluate.ts [postcss] (ecmascript)"</span>, (<span class="hljs-function">(<span class="hljs-params">__turbopack_context__</span>) =&gt;</span> {
+<span class="hljs-meta">"use strict"</span>;
+
+__turbopack_context__.s([
+    <span class="hljs-string">"run"</span>,
+    ()=&gt;run
+]);
+<span class="hljs-keyword">var</span> __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$turbopack$<span class="hljs-number">2</span>d$node$<span class="hljs-number">5</span>d2f$ipc$<span class="hljs-number">2</span>f$index$<span class="hljs-number">2</span>e$ts__$<span class="hljs-number">5</span>b$postcss$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$ecmascript$<span class="hljs-number">29</span>$__ = __turbopack_context__.i(<span class="hljs-string">"[turbopack-node]/ipc/index.ts [postcss] (ecmascript)"</span>);
+;
+<span class="hljs-keyword">const</span> ipc = __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$turbopack$<span class="hljs-number">2</span>d$node$<span class="hljs-number">5</span>d2f$ipc$<span class="hljs-number">2</span>f$index$<span class="hljs-number">2</span>e$ts__$<span class="hljs-number">5</span>b$postcss$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$ecmascript$<span class="hljs-number">29</span>$__[<span class="hljs-string">"IPC"</span>];
+<span class="hljs-keyword">const</span> queue = [];
+<span class="hljs-keyword">const</span> run = <span class="hljs-keyword">async</span> (moduleFactory)=&gt;{
+    <span class="hljs-keyword">let</span> nextId = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">const</span> requests = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>();
+    <span class="hljs-keyword">const</span> internalIpc = {
+        <span class="hljs-attr">sendInfo</span>: <span class="hljs-function">(<span class="hljs-params">message</span>)=&gt;</span>ipc.send({
+                <span class="hljs-attr">type</span>: <span class="hljs-string">'info'</span>,
+                <span class="hljs-attr">data</span>: message
+            }),
+        <span class="hljs-attr">sendRequest</span>: <span class="hljs-function">(<span class="hljs-params">message</span>)=&gt;</span>{
+            <span class="hljs-keyword">const</span> id = nextId++;
+            <span class="hljs-keyword">let</span> resolve, reject;
+            <span class="hljs-keyword">const</span> promise = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">res, rej</span>)=&gt;</span>{
+                resolve = res;
+                reject = rej;
+            });
+            requests.set(id, {
+                resolve,
+                reject
+            });
+            <span class="hljs-keyword">return</span> ipc.send({
+                <span class="hljs-attr">type</span>: <span class="hljs-string">'request'</span>,
+                id,
+                <span class="hljs-attr">data</span>: message
+            }).then(<span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span>promise);
+        },
+        <span class="hljs-attr">sendError</span>: <span class="hljs-function">(<span class="hljs-params">error</span>)=&gt;</span>{
+            <span class="hljs-keyword">return</span> ipc.sendError(error);
+        }
+    };
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14"></a>
+</div>
+<p>Initialize module and send ready message</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">    <span class="hljs-keyword">let</span> getValue;
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">const</span> <span class="hljs-built_in">module</span> = <span class="hljs-keyword">await</span> moduleFactory();
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span>.init === <span class="hljs-string">'function'</span>) {
+            <span class="hljs-keyword">await</span> <span class="hljs-built_in">module</span>.init();
+        }
+        getValue = <span class="hljs-built_in">module</span>.default;
+        <span class="hljs-keyword">await</span> ipc.sendReady();
+    } <span class="hljs-keyword">catch</span> (err) {
+        <span class="hljs-keyword">await</span> ipc.sendReady();
+        <span class="hljs-keyword">await</span> ipc.sendError(err);
+    }
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15"></a>
+</div>
+<p>Queue handling</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">    <span class="hljs-keyword">let</span> isRunning = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">const</span> run = <span class="hljs-keyword">async</span> ()=&gt;{
+        <span class="hljs-keyword">while</span>(queue.length &gt; <span class="hljs-number">0</span>){
+            <span class="hljs-keyword">const</span> args = queue.shift();
+            <span class="hljs-keyword">try</span> {
+                <span class="hljs-keyword">const</span> value = <span class="hljs-keyword">await</span> getValue(internalIpc, ...args);
+                <span class="hljs-keyword">await</span> ipc.send({
+                    <span class="hljs-attr">type</span>: <span class="hljs-string">'end'</span>,
+                    <span class="hljs-attr">data</span>: value === <span class="hljs-literal">undefined</span> ? <span class="hljs-literal">undefined</span> : <span class="hljs-built_in">JSON</span>.stringify(value, <span class="hljs-literal">null</span>, <span class="hljs-number">2</span>),
+                    <span class="hljs-attr">duration</span>: <span class="hljs-number">0</span>
+                });
+            } <span class="hljs-keyword">catch</span> (e) {
+                <span class="hljs-keyword">await</span> ipc.sendError(e);
+            }
+        }
+        isRunning = <span class="hljs-literal">false</span>;
+    };
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16"></a>
+</div>
+<p>Communication handling</p>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript">    <span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
+        <span class="hljs-keyword">const</span> msg = <span class="hljs-keyword">await</span> ipc.recv();
+        <span class="hljs-keyword">switch</span>(msg.type){
+            <span class="hljs-keyword">case</span> <span class="hljs-string">'evaluate'</span>:
+                {
+                    queue.push(msg.args);
+                    <span class="hljs-keyword">if</span> (!isRunning) {
+                        isRunning = <span class="hljs-literal">true</span>;
+                        run();
+                    }
+                    <span class="hljs-keyword">break</span>;
+                }
+            <span class="hljs-keyword">case</span> <span class="hljs-string">'result'</span>:
+                {
+                    <span class="hljs-keyword">const</span> request = requests.get(msg.id);
+                    <span class="hljs-keyword">if</span> (request) {
+                        requests.delete(msg.id);
+                        <span class="hljs-keyword">if</span> (msg.error) {
+                            request.reject(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(msg.error));
+                        } <span class="hljs-keyword">else</span> {
+                            request.resolve(msg.data);
+                        }
+                    }
+                    <span class="hljs-keyword">break</span>;
+                }
+            <span class="hljs-attr">default</span>:
+                {
+                    <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'unexpected message type'</span>, msg.type);
+                    process.exit(<span class="hljs-number">1</span>);
+                }
+        }
+    }
+};
+}),
+<span class="hljs-string">"[turbopack-node]/ipc/evaluate.ts/evaluate.js { INNER =&gt; \"[turbopack-node]/transforms/postcss.ts { CONFIG =&gt; \\\"[project]/postcss.config.mjs [postcss] (ecmascript)\\\" } [postcss] (ecmascript)\", RUNTIME =&gt; \"[turbopack-node]/ipc/evaluate.ts [postcss] (ecmascript)\" } [postcss] (ecmascript)"</span>, (<span class="hljs-function">(<span class="hljs-params">__turbopack_context__</span>) =&gt;</span> {
+<span class="hljs-meta">"use strict"</span>;
+
+__turbopack_context__.s([]);
+<span class="hljs-keyword">var</span> __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$turbopack$<span class="hljs-number">2</span>d$node$<span class="hljs-number">5</span>d2f$ipc$<span class="hljs-number">2</span>f$evaluate$<span class="hljs-number">2</span>e$ts__$<span class="hljs-number">5</span>b$postcss$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$ecmascript$<span class="hljs-number">29</span>$__ = __turbopack_context__.i(<span class="hljs-string">"[turbopack-node]/ipc/evaluate.ts [postcss] (ecmascript)"</span>);
+;
+<span class="hljs-function">(<span class="hljs-params"><span class="hljs-number">0</span>, __TURBOPACK__imported__module__$<span class="hljs-number">5</span>b$turbopack$<span class="hljs-number">2</span>d$node$<span class="hljs-number">5</span>d2f$ipc$<span class="hljs-number">2</span>f$evaluate$<span class="hljs-number">2</span>e$ts__$<span class="hljs-number">5</span>b$postcss$<span class="hljs-number">5</span>d$__$<span class="hljs-number">28</span>$ecmascript$<span class="hljs-number">29</span>$__[<span class="hljs-string">"run"</span>]</span>)(<span class="hljs-params">(</span>)=&gt;</span>__turbopack_context__.A(<span class="hljs-string">'[turbopack-node]/transforms/postcss.ts { CONFIG =&gt; "[project]/postcss.config.mjs [postcss] (ecmascript)" } [postcss] (ecmascript, async loader)'</span>));
+}),
+];
+
+</pre>
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap" id="sourcemappingurl5broot-of-the-server5d__974941ed._.js.map">
+  <h1>
+    <a href="#sourcemappingurl5broot-of-the-server5d__974941ed._.js.map" name="sourcemappingurl5broot-of-the-server5d__974941ed._.js.map" class="pilcrow"></a>
+sourceMappingURL=%5Broot-of-the-server%5D__974941ed._.js.map
+  </h1>
+</div>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript"></pre>
+        </td>
+      </tr>
+    
+  </tbody>
+</table>
+
+  </div>
+</body>
+</html>
