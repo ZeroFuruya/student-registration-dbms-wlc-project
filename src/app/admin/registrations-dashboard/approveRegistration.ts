@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/auth/server";
+import { sendCredentialsEmail } from "@/lib/email";
 import { handleError } from "@/lib/utils";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
@@ -67,7 +68,7 @@ export const approveRegistration = async (registrationId: number, adminId: numbe
             .eq("id", reg.id);
 
         // 6. Send credentials email to the user
-        await sendCredentialsEmail(reg.email, defaultPassword);
+        await sendCredentialsEmail(reg.email, defaultPassword, `${reg.first_name} ${reg.last_name}`);
 
         return student;
 

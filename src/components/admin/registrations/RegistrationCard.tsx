@@ -1,8 +1,8 @@
 "use client";
 
+import { approveRegistration, rejectRegistration } from "@/actions/registrations";
 import { Button } from "@/components/ui/button";
 import { Database } from "@/types/supabase";
-import { approveRegistration, rejectRegistration } from "@/app/admin/registrations-dashboard/actions";
 import { toast } from "sonner";
 
 interface Props {
