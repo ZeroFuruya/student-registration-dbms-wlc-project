@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   reactStrictMode: false,
   experimental: {
     serverActions: {
@@ -8,11 +8,8 @@ const nextConfig = {
     },
   },
   typescript: {
-    ignoreBuildErrors: true, // ✅ This tells Next.js to build even with TS errors
+    ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true, // ✅ This will skip ESLint errors during build
-  },
-} as NextConfig;
+};
 
 export default nextConfig;
