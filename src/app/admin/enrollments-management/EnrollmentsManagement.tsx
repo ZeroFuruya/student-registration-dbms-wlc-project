@@ -203,9 +203,9 @@ export default function EnrollmentManagement() {
                                                             </p>
                                                         </div>
                                                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${e.enrollment_status === 'Approved' ? 'bg-green-100 text-green-800' :
-                                                                e.enrollment_status === 'Rejected' ? 'bg-red-100 text-red-800' :
-                                                                    e.enrollment_status === 'For Review' ? 'bg-yellow-100 text-yellow-800' :
-                                                                        'bg-gray-100 text-gray-800'
+                                                            e.enrollment_status === 'Rejected' ? 'bg-red-100 text-red-800' :
+                                                                e.enrollment_status === 'For Review' ? 'bg-yellow-100 text-yellow-800' :
+                                                                    'bg-gray-100 text-gray-800'
                                                             }`}>
                                                             {e.enrollment_status}
                                                         </span>
@@ -264,8 +264,8 @@ export default function EnrollmentManagement() {
                                                                         <span>
                                                                             {doc.document_type}
                                                                             <span className={`ml-2 px-2 py-0.5 rounded text-xs ${doc.status === 'Verified' ? 'bg-green-100 text-green-800' :
-                                                                                    doc.status === 'Rejected' ? 'bg-red-100 text-red-800' :
-                                                                                        'bg-yellow-100 text-yellow-800'
+                                                                                doc.status === 'Rejected' ? 'bg-red-100 text-red-800' :
+                                                                                    'bg-yellow-100 text-yellow-800'
                                                                                 }`}>
                                                                                 {doc.status}
                                                                             </span>

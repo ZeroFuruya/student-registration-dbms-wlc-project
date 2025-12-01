@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/auth/server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { handleError } from "@/lib/utils";
 
 export interface EnrollmentData {
@@ -228,22 +229,163 @@ export const getAllStudentsWithEnrollmentsSeparate = async () => {
         throw err;
     }
 };
-
-export const updateEnrollmentStatus = async (enrollmentId: number, status: string) => {
-    try {
-        const supabase = await createClient();
-
-        const { data, error } = await supabase
-            .from("enrollments")
-            .update({ enrollment_status: status })
-            .eq("id", enrollmentId)
-            .select()
-            .single();
-
-        if (error) throw error;
-        return data;
-    } catch (err: any) {
-        handleError(err);
-        throw err;
-    }
+// Fee configuration - adjust these values as needed
+const FEE_CONFIG = {
+    pricePerUnit: 1000, // Base price per unit in pesos (900-1200 range)
+    miscellaneousFees: 2500, // Registration, library, lab fees, etc.
+    programSpecificFees: {
+        // Add program_id specific fees if needed
+        // Example: 1: 1500, // Program ID 1 has additional 1500 pesos
+    } as Record<number, number>
 };
+
+export async function updateEnrollmentStatus(enrollmentId: number, status: string) {
+    // 1. Update enrollment status
+    const { data: enrollment, error: updateError } = await supabaseAdmin
+        .from("enrollments")
+        .update({ enrollment_status: status })
+        .eq("id", enrollmentId)
+        .select("id, student_id, academic_year, semester, total_amount, amount_paid")
+        .single();
+
+    if (updateError) throw updateError;
+
+    // 2. If not approved, stop here (no balance creation)
+    if (status !== "Approved") return enrollment;
+
+    // 3. Fetch student to get program/year info
+    const { data: student, error: studentErr } = await supabaseAdmin
+        .from("students")
+        .select("id, program_id, year_level")
+        .eq("id", enrollment.student_id)
+        .single();
+
+    if (studentErr || !student) throw studentErr || new Error("Student not found");
+
+    // 4. Get year_id from years table
+    const { data: yearData, error: yearErr } = await supabaseAdmin
+        .from("years")
+        .select("year_id")
+        .eq("program_id", student.program_id)
+        .eq("year_level", student.year_level)
+        .maybeSingle();
+
+    if (yearErr || !yearData) {
+        console.warn(`[UpdateEnrollment] No year found for program ${student.program_id}, year ${student.year_level}`);
+        // Fallback to miscellaneous fees only
+        const { error: fallbackErr } = await supabaseAdmin
+            .from("enrollments")
+            .update({
+                total_amount: FEE_CONFIG.miscellaneousFees,
+                amount_paid: 0,
+                payment_status: "Unpaid"
+            })
+            .eq("id", enrollmentId);
+
+        if (fallbackErr) throw fallbackErr;
+        return enrollment;
+    }
+
+    // 5. Fetch courses for this year and semester
+    const { data: courses, error: coursesErr } = await supabaseAdmin
+        .from("courses")
+        .select("course_id, course_code, course_name, units")
+        .eq("year_id", yearData.year_id)
+        .eq("semester", enrollment.semester)
+        .eq("status", "Active"); // Only include active courses
+
+    if (coursesErr) throw coursesErr;
+
+    // 6. Calculate total units
+    const totalUnits = courses?.reduce((sum, c) => sum + Number(c.units), 0) || 0;
+
+    // 7. Calculate tuition fee based on units
+    const tuitionFee = totalUnits * FEE_CONFIG.pricePerUnit;
+
+    // 8. Add program-specific fees if configured
+    const programFee = FEE_CONFIG.programSpecificFees[student.program_id] || 0;
+
+    // 9. Calculate total amount (tuition + misc + program fees)
+    const totalAmount = tuitionFee + FEE_CONFIG.miscellaneousFees + programFee;
+
+    console.log(`[UpdateEnrollment] Enrollment ID: ${enrollmentId}`);
+    console.log(`[UpdateEnrollment] Program: ${student.program_id}, Year: ${student.year_level}, Semester: ${enrollment.semester}`);
+    console.log(`[UpdateEnrollment] Total Units: ${totalUnits}`);
+    console.log(`[UpdateEnrollment] Tuition Fee: ${tuitionFee} pesos (${totalUnits} units × ${FEE_CONFIG.pricePerUnit})`);
+    console.log(`[UpdateEnrollment] Miscellaneous Fees: ${FEE_CONFIG.miscellaneousFees} pesos`);
+    console.log(`[UpdateEnrollment] Program Fee: ${programFee} pesos`);
+    console.log(`[UpdateEnrollment] Total Amount: ${totalAmount} pesos`);
+
+    // 10. Update enrollments with total_amount and reset amount_paid
+    const { error: enrollUpdateErr } = await supabaseAdmin
+        .from("enrollments")
+        .update({
+            total_amount: totalAmount,
+            amount_paid: 0,
+            payment_status: "Unpaid"
+        })
+        .eq("id", enrollmentId);
+
+    if (enrollUpdateErr) throw enrollUpdateErr;
+
+    // 11. Optional: Create enrollment_courses records if table exists
+    if (courses && courses.length > 0) {
+        try {
+            // Check if enrollment_courses records already exist
+            const { data: existingCourses } = await supabaseAdmin
+                .from("enrollment_courses")
+                .select("id")
+                .eq("enrollment_id", enrollmentId)
+                .limit(1);
+
+            // Only insert if no records exist
+            if (!existingCourses || existingCourses.length === 0) {
+                const enrollmentCourses = courses.map(course => ({
+                    enrollment_id: enrollmentId,
+                    course_id: course.course_id,
+                    status: 'Enrolled'
+                }));
+
+                const { error: coursesInsertErr } = await supabaseAdmin
+                    .from("enrollment_courses")
+                    .insert(enrollmentCourses);
+
+                if (coursesInsertErr && coursesInsertErr.code !== '42P01') {
+                    console.error("[UpdateEnrollment] Error creating enrollment_courses:", coursesInsertErr);
+                }
+            }
+        } catch (err) {
+            console.log("[UpdateEnrollment] enrollment_courses table may not exist, skipping...");
+        }
+    }
+
+    // 12. Check if a payment record already exists
+    const { data: existingPayment, error: paymentCheckError } = await supabaseAdmin
+        .from("payments")
+        .select("id")
+        .eq("enrollment_id", enrollmentId)
+        .maybeSingle();
+
+    if (paymentCheckError) throw paymentCheckError;
+
+    if (existingPayment) {
+        console.log(`[UpdateEnrollment] Payment record already exists for enrollment ${enrollmentId}`);
+        return enrollment;
+    }
+
+    // 13. Create payment record with the calculated total amount
+    const { error: payError } = await supabaseAdmin
+        .from("payments")
+        .insert({
+            enrollment_id: enrollmentId,
+            amount: totalAmount,
+            payment_method: "Pending",
+            payment_date: new Date().toISOString()
+        });
+
+    if (payError) throw payError;
+
+    console.log(`[UpdateEnrollment] Created payment record for ${totalAmount} pesos`);
+
+    return enrollment;
+}
