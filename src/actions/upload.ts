@@ -23,25 +23,30 @@ export async function uploadDocumentAction(formData: FormData) {
         return { error: "Missing document type", url: null };
     }
 
-    // Optional: Verify the enrollment belongs to this user's student
-    const { data: enrollment } = await supabase
+    const { data: enrollment, error: enrollmentError } = await supabase
         .from("enrollments")
         .select(`
-            id,
-            students!inner(auth_user_id)
-        `)
+        id,
+        students:students!inner(auth_user_id)
+    `)
         .eq("id", enrollmentId)
         .single();
 
-    // enrollment.students is returned as an array by the join; verify it and check the first student's auth_user_id
-    if (
-        !enrollment ||
-        !Array.isArray(enrollment.students) ||
-        enrollment.students.length === 0 ||
-        enrollment.students[0].auth_user_id !== user.id
-    ) {
-        return { error: "Unauthorized: Enrollment not found or doesn't belong to you", url: null };
+    if (enrollmentError || !enrollment) {
+        return { error: "Enrollment not found", url: null };
     }
+
+    let student = enrollment.students;
+
+    // Normalize: If it's an array, take first. If it's an object, keep it.
+    if (Array.isArray(student)) {
+        student = student[0];
+    }
+
+    if (!student || student.auth_user_id !== user.id) {
+        return { error: "Unauthorized: Enrollment doesn't belong to you", url: null };
+    }
+
 
     const fileExt = file.name.split(".").pop();
     const filePath = `enrollment/${enrollmentId}/${crypto.randomUUID()}.${fileExt}`;
